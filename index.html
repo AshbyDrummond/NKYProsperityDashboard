@@ -337,7 +337,7 @@ footer h6{font-family:var(--f-serif);font-size:16px;font-weight:600}
 .dlg-head h3{font-family:var(--f-serif);font-weight:600;font-size:26px}
 .why{background:none;border-left:3px solid var(--brand);border-radius:0;padding:4px 0 4px 14px}
 /* overview */
-.ov-hero{grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:36px;align-items:center}
+.ov-hero{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center}
 .ov-intro .headline{font-size:clamp(30px,3.8vw,46px);max-width:22ch}
 .ov-intro p{font-size:15.5px}
 .emblem{margin:0;position:relative}
@@ -543,6 +543,15 @@ tr.grp td{background:none!important;border-bottom:2px solid var(--pc)!important;
 #hl-overview .bs-t{font:500 clamp(19px,1.7vw,24px)/1.3 var(--f-serif);color:var(--ink);padding-bottom:6px;max-width:24ch}
 #hl-overview .bs-but{display:block;font-style:italic;color:var(--ink-2);margin-top:4px}
 .ov-intro p.ov-lead{font:400 clamp(16px,1.15vw,18px)/1.6 var(--f-serif);color:var(--ink);border-left:3px solid var(--accent);padding-left:16px;max-width:60ch;margin:0 0 18px}
+.ov-parts{display:flex;flex-direction:column;gap:2px;max-width:62ch}
+.ov-parts .ov-k{font:700 11px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.ovp{display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;align-items:start;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:11px 6px 11px 0;color:var(--ink-2);font:400 13.5px/1.5 var(--f-body);cursor:pointer}
+.ovp:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.ovp b{display:block;font:600 15.5px/1.35 var(--f-body);color:var(--ink);margin-bottom:2px}
+.ovp:hover b{text-decoration:underline;text-underline-offset:3px}
+.ovp-n{font:600 26px/1 var(--f-fig);color:var(--accent);padding-top:1px}
+.ovp-more{border-top:1px solid var(--line);margin:0;padding-top:12px;font-size:13.5px;color:var(--ink-2)}
+.ovp-more .linkbtn{font-size:13.5px}
 .ov-doms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:4px}
 .ov-doms .od-k{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;font:700 11px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
 .ov-doms .od-k em{font-style:normal;letter-spacing:.02em;text-transform:none;font-weight:500}
@@ -628,7 +637,13 @@ footer{border-top:0!important;padding-top:0!important}
       <h1 class="ptitle">Economic Prosperity Index</h1>
       <h2 class="headline" id="hl-overview"></h2>
       <p class="ov-lead">Northern Kentucky’s economy is usually reported as part of the Cincinnati metro, which hides how Boone, Kenton, and Campbell counties are doing on their own. This index measures the three counties together against every U.S. metro of 250,000+ residents, giving funders, partners, and policymakers one consistent picture of where the region leads, where it lags, and whether it is moving in the right direction.</p>
-      <div class="ov-doms" id="ov-doms"></div>
+      <div class="ov-parts">
+        <div class="ov-k">What this dashboard does</div>
+        <button type="button" class="ovp" data-go="metrics"><span class="ovp-n">1</span><span><b>Tracks 30 regional metrics</b>Growth, wealth, labor market, innovation, education, and quality of life, with trends back to 2015 and comparisons to Cincinnati and the typical U.S. metro.</span></button>
+        <button type="button" class="ovp" data-go="goals"><span class="ovp-n">2</span><span><b>Sets goals to reach by 2030</b>Eight priority targets chosen by BE NKY Growth Partnership, each checked every year against the path needed to hit it.</span></button>
+        <button type="button" class="ovp" data-go="index"><span class="ovp-n">3</span><span><b>Scores overall prosperity</b>A Prosperity Index that rolls all 30 metrics into one 0 to 10 score and ranks Northern Kentucky against 196 metros.</span></button>
+        <p class="ovp-more">Use the <button type="button" class="linkbtn" data-go="map">Map</button> to see every metro at once, or <button type="button" class="linkbtn" data-go="compare">Compare Regions</button> to line Northern Kentucky up against any peer.</p>
+      </div>
     </div>
     <div class="emwrap"><figure class="emblem" id="ov-emblem" aria-label="Map of Boone, Kenton, and Campbell counties along the Ohio and Licking rivers"></figure>
       <div class="emctl"><label class="lab" for="ov-cmetric">Shade counties by</label><select id="ov-cmetric"></select></div>
@@ -1577,7 +1592,7 @@ function countyScore(c,k){ const L=(D.latest[c]||[])[k]; if(!L||L[1]==null) retu
   return {yr:L[0],v:L[1],s:pool.filter(p=>p<x).length/pool.length*10,n:pool.length}; }
 const ov={k:null};
 function emblemSVG(k){
-  const E=D.emblem; let s=`<svg viewBox="0 0 ${E.W} ${E.H}">`;
+  const E=D.emblem; let s=`<svg viewBox="6 6 ${E.W-12} ${E.H-12}">`;
   E.counties.forEach(c=>{const cs=k==null?null:countyScore(c.id,k); s+=`<path class="cty${k==null?'':' on'}" data-c="${c.id}" d="${c.d}"${cs?` style="fill:${tierColor(cs.s)};fill-opacity:.8"`:''}/>`;});
   s+=`<path class="water" d="${E.water}"/>`;
   const LP={Boone:[0.273,0.50],Kenton:[0.545,0.585],Campbell:[0.84,0.50]};
@@ -1608,8 +1623,8 @@ function renderP0(){
   const sc=getScores(NKY,'latest'); const bt=beatCount(NKY,sc); const bw=bestWorst(sc);
   { const fr=fracPhrase(bt.beat/bt.of); const big=fr==='half of'?'Half':fr.replace(' in ','<i> in </i>');
     setHL('hl-overview', `<span class="bs-k">Northern Kentucky outperforms</span><span class="bs-n">${big}</span><span class="bs-t">U.S. metros on the overall index${bw.worst[0]<5?`, <span class="bs-but">but trails most of them on ${DOMWORD[bw.worst[1]]}.</span>`:', and beats the national middle in every domain.'}</span>`); }
-  document.getElementById('ov-doms').innerHTML=`<span class="od-k">Six domains<em>Score out of 10</em></span>`+P.map((p,i)=>{const v=sc.ps[i]; return `<button type="button" class="od" data-pi="${i}" style="--pc:var(--p${i})" aria-label="${esc(p)} ${v==null?'':v.toFixed(1)+' out of 10'}"><span class="nm">${dicon(i,'sm')}${esc(p)}</span><span class="v" style="color:${v==null?'var(--muted)':scoreText(v)}">${v==null?'\u2014':v.toFixed(1)}</span><span class="tr"><i style="width:${v==null?0:v*10}%;background:${v==null?'transparent':scoreText(v)}"></i></span></button>`;}).join('');
-  document.querySelectorAll('#ov-doms .od').forEach(b=>b.addEventListener('click',()=>{const c=document.querySelectorAll('#ov-pillars .pcard')[+b.dataset.pi]; if(c) c.scrollIntoView({behavior:'smooth',block:'start'});}));
+  if(document.getElementById('ov-doms')) document.getElementById('ov-doms').innerHTML=`<span class="od-k">Six domains<em>Score out of 10</em></span>`+P.map((p,i)=>{const v=sc.ps[i]; return `<button type="button" class="od" data-pi="${i}" style="--pc:var(--p${i})" aria-label="${esc(p)} ${v==null?'':v.toFixed(1)+' out of 10'}"><span class="nm">${dicon(i,'sm')}${esc(p)}</span><span class="v" style="color:${v==null?'var(--muted)':scoreText(v)}">${v==null?'\u2014':v.toFixed(1)}</span><span class="tr"><i style="width:${v==null?0:v*10}%;background:${v==null?'transparent':scoreText(v)}"></i></span></button>`;}).join('');
+  if(0) document.querySelectorAll('#ov-doms .od').forEach(b=>b.addEventListener('click',()=>{const c=document.querySelectorAll('#ov-pillars .pcard')[+b.dataset.pi]; if(c) c.scrollIntoView({behavior:'smooth',block:'start'});}));
   drawEmblem();
   drawOvFp();
   document.getElementById('ov-score').innerHTML=`<div class="kicker">Overall score</div>
