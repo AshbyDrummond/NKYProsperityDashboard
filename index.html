@@ -608,6 +608,7 @@ footer{border-top:0!important;padding-top:0!important}
 .tc-btn{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:9px 16px;font-size:13.5px}
 .tc-btn:hover{filter:brightness(1.12);border-color:var(--accent)}
 .g-intro{max-width:68ch;font-size:15px;line-height:1.55;color:var(--ink-2);margin:10px 0 8px}
+.ov-cta-act{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .tc-btn[aria-expanded="true"]{background:var(--surface);color:var(--ink);border-color:var(--axis)}
 .rank-cta h4{font-size:19px}.rank-cta .rk-h{font-family:var(--f-serif);font-weight:600;font-size:17px;margin:18px 0 6px}
 :root{--tx-neg:#c0392b;--tx-mid:#b07a10;--tx-pos:#1f7a3a}
@@ -653,8 +654,9 @@ footer{border-top:0!important;padding-top:0!important}
       <div class="emctl"><label class="lab" for="ov-cmetric">Shade counties by</label><select id="ov-cmetric"></select></div>
       <div class="emleg" id="ov-cleg"></div><div class="maptip" id="ov-ctip" hidden></div></div>
   </div>
-  <div class="glance">
-    <div class="g-score" id="ov-score"></div>
+  <div class="twin-cta ov-cta">
+    <div class="tc-row"><div><h4>Want to see how Northern Kentucky scores on the Prosperity Index?</h4><p class="sub">See the region’s overall 0 to 10 score, how it ranks against 196 U.S. metros, and its score on each of the 30 metrics.</p></div>
+      <div class="ov-cta-act"><button type="button" class="btn tc-btn" data-go="index">View the Prosperity Index</button><button class="linkbtn dl-only" type="button" onclick="window.__scorecard&&window.__scorecard()">Download scorecard (PDF)</button></div></div>
   </div>
   <div class="cable-div" aria-hidden="true"></div>
   <div class="ov-sec">
@@ -1631,7 +1633,7 @@ function renderP0(){
   if(0) document.querySelectorAll('#ov-doms .od').forEach(b=>b.addEventListener('click',()=>{const c=document.querySelectorAll('#ov-pillars .pcard')[+b.dataset.pi]; if(c) c.scrollIntoView({behavior:'smooth',block:'start'});}));
   drawEmblem();
   drawOvFp();
-  document.getElementById('ov-score').innerHTML=`<div class="gs-l"><div class="kicker">Overall score</div>
+  if(document.getElementById('ov-score')) document.getElementById('ov-score').innerHTML=`<div class="gs-l"><div class="kicker">Overall score</div>
     <div class="score-big"><span class="v">${sc.os.toFixed(1)}</span><span class="of">out of 10 · ranks ${ord(sc.or)} of ${totalFor(NKY,sc.n)}</span></div>
     <div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><button class="linkbtn go-link" type="button" data-go="index">Full index</button><button class="linkbtn dl-only" type="button" onclick="window.__scorecard&&window.__scorecard()">Download scorecard (PDF)</button></div></div>
     <div class="gs-r">${swarm(NKY,'latest',bt.beat,bt.of)}</div>`;
