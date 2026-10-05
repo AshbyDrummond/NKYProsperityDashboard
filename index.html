@@ -1790,6 +1790,7 @@ const G_BASE=2019, G_END=2030;
 const qtl=(a,p)=>{const s=a.slice().sort((x,y)=>x-y); return s[Math.round(p*(s.length-1))];};
 const POOLC=()=>[CIN,...metros.map(r=>r.code)];
 const usd0=v=>'$'+Math.round(v).toLocaleString('en-US'), usdK=v=>'$'+(v/1000).toFixed(0)+'K';
+const GOAL_LABEL={'Prime-Age Labor Force Participation':'Prime-Age Participation'};
 const GOALS=GOAL_SPEC.map(([name,spec])=>{
   let g;
   if(name==='GRP per capita'){ const G=D.gpc, k=M.findIndex(m=>m.name==='GRP per Capita');
@@ -1805,6 +1806,7 @@ const GOALS=GOAL_SPEC.map(([name,spec])=>{
   g.exp=g.base+(g.target-g.base)*Math.min(1,(g.ly-g.by)/(G_END-g.by));
   const tol=Math.abs(g.target-g.base)*0.05;
   g.st=(g.now-g.target)*g.dir>=0?'met':(g.now-g.exp)*g.dir>=-tol?'on':'behind';
+  if(GOAL_LABEL[name]) g.name=GOAL_LABEL[name];
   return g;
 });
 const G_ST={met:'Met',on:'On track',behind:'Behind pace'};
