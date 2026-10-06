@@ -926,7 +926,7 @@ body.no-share .copylink{display:none}
     <li>Domain scores average their metric z-scores and are re-standardized; the overall score averages all metric z-scores and needs at least 5 of 6 domains.</li>
     <li>Metric scores place each metric’s z-score on a bell curve and scale it to 0 to 10, so a small difference in value moves the score only a little, even where many metros are bunched together. Domain and overall scores are the share of benchmark metros a region outperforms, times 10. Northern Kentucky is scored against the metros but is not part of the benchmark, since its counties sit inside the Cincinnati MSA.</li>
     <li>Choose the benchmark on the Overview or from the menu beside the page tabs. <b>United States</b> compares Northern Kentucky with all 196 metros of 250,000+ residents. <b>Middle America</b> uses the Census Bureau's Midwest (Illinois, Indiana, Iowa, Kansas, Michigan, Minnesota, Missouri, Nebraska, North Dakota, Ohio, South Dakota, and Wisconsin) plus Kentucky, Pennsylvania, Tennessee, and West Virginia: 55 metros. A metro counts toward a state when its principal city is there. In both indexes every score, rank, and median is recalculated within the group, so the same value can score differently in each.</li>
-    <li>Index scores use the scoring year, the latest year with data for every metric (2024). Metrics that already have 2025 values show them on the Regional Metrics page as raw data, but they are not scored until every metric reaches 2025. Each year from 2015 to 2024 re-scores every region on that year's data. Ranks count all regions, including Northern Kentucky, so a rank of 43rd of 197 means 42 regions score higher. Regions are built from member counties (2023 OMB delineations).</li>
+    <li>Index scores use 2024, the latest year with data for every metric. Metrics that already have 2025 values show them on the Regional Metrics page as raw data, but they are not scored until every metric reaches 2025. Each year from 2015 to 2024 re-scores every region on that year's data. Ranks count all regions, including Northern Kentucky, so a rank of 43rd of 197 means 42 regions score higher. Regions are built from member counties (2023 OMB delineations).</li>
   </ul></details>
   <div class="note">Source: BE NKY Growth Partnership. Data from the Census Bureau, BEA, BLS, USPTO PatentsView, NCES IPEDS, and County Health Rankings & Roadmaps. Data through 2025; index scored on 2024. Dashboard updated October 2026.</div>
 </div></footer>
@@ -1217,11 +1217,11 @@ function stateHash(){ const u={}; if(BK!=='us') u.b=BK;
   const q=Object.entries(u).map(([k,v])=>k+'='+v).join('&'); return '#'+CUR+(q?'?'+q:''); }
 function syncHash(){ const h=stateHash(); if(h===LAST_HASH) return; LAST_HASH=h; try{history.replaceState(null,'',h);}catch(e){} }
 function applyHash(){ const raw=(location.hash||'').replace(/^#/,''); const [p,q]=raw.split('?'); const u=new URLSearchParams(q||'');
-  const yOK=y=>y==='latest'||SY.includes(+y); const selOK=(sel,v)=>!!v&&[...sel.options].some(o=>o.value===v);
+  const yN=y=>(y!=null&&String(y)===String(SYR))?'latest':y; const yOK=y=>y==='latest'||SY.includes(+y); const selOK=(sel,v)=>!!v&&[...sel.options].some(o=>o.value===v);
   const b=u.get('b'); if(b&&BENCH[b]&&b!==BK) setBench(b);
-  if(p==='index'){ const r=hdecode(u.get('r')), y=u.get('y'), s=u.get('s'); if(r&&inBench(r)){p2.region=r;s2r.value=r;} if(y&&yOK(y)){p2.year=y;s2y.value=y;} if(selOK(s2m,s)){p2.sel=s;s2m.value=s;} }
-  else if(p==='compare'){ const r=u.get('r'), y=u.get('y'), m=u.get('m'); if(r){ const rs=[...new Set(r.split(',').map(hdecode).filter(inBench))].slice(0,4); if(rs.length) p3.regions=rs; } if(y&&yOK(y)){p3.year=y;s3y.value=y;} if(m!=null&&m!==''&&selOK(s3m,m)){p3.metric=+m;s3m.value=m;} }
-  else if(p==='map'){ const s=u.get('s'), y=u.get('y'), f=hdecode(u.get('f')); if(selOK(s5,s)){p5.sel=s;s5.value=s;} if(y&&yOK(y)){p5.year=y;s5y.value=y;} if(f&&inBench(f)) p5.focus=f; }
+  if(p==='index'){ const r=hdecode(u.get('r')), y=yN(u.get('y')), s=u.get('s'); if(r&&inBench(r)){p2.region=r;s2r.value=r;} if(y&&yOK(y)){p2.year=y;s2y.value=y;} if(selOK(s2m,s)){p2.sel=s;s2m.value=s;} }
+  else if(p==='compare'){ const r=u.get('r'), y=yN(u.get('y')), m=u.get('m'); if(r){ const rs=[...new Set(r.split(',').map(hdecode).filter(inBench))].slice(0,4); if(rs.length) p3.regions=rs; } if(y&&yOK(y)){p3.year=y;s3y.value=y;} if(m!=null&&m!==''&&selOK(s3m,m)){p3.metric=+m;s3m.value=m;} }
+  else if(p==='map'){ const s=u.get('s'), y=yN(u.get('y')), f=hdecode(u.get('f')); if(selOK(s5,s)){p5.sel=s;s5.value=s;} if(y&&yOK(y)){p5.year=y;s5y.value=y;} if(f&&inBench(f)) p5.focus=f; }
   return pages.includes(p)?p:'overview'; }
 window.addEventListener('hashchange',()=>{ if(location.hash===LAST_HASH) return; const p=applyHash(); const was=rendered[p]; show(p); if(was) ({index:renderP2,compare:renderP3,map:renderP5})[p]?.(); });
 (()=>{ const b=document.getElementById('copy-link'); if(!b) return;
@@ -1413,7 +1413,7 @@ function fillRegionSelect(sel,include){ sel.innerHTML='';
   const g1=document.createElement('optgroup');g1.label='Focus';[NKY,CIN].forEach(c=>{if(!include||include(c))g1.appendChild(new Option(RNAME(c),c));});
   const g2=document.createElement('optgroup');g2.label='Metros of 250,000+ (A to Z)';metros.forEach(r=>{if(!include||include(r.code))g2.appendChild(new Option(r.name,r.code));});
   sel.append(g1,g2);}
-function fillYear(sel){sel.innerHTML='';sel.add(new Option(`${SYR} (scoring year)`,'latest'));SY.slice().reverse().forEach(y=>sel.add(new Option(String(y),String(y))));}
+function fillYear(sel){sel.innerHTML='';sel.add(new Option(String(SYR),'latest'));SY.slice().reverse().filter(y=>y!==SYR).forEach(y=>sel.add(new Option(String(y),String(y))));}
 const s2r=document.getElementById('p2-region'), s2y=document.getElementById('p2-year'), s2m=document.getElementById('p2-metric');
 fillRegionSelect(s2r); fillYear(s2y); (()=>{const g0=document.createElement('optgroup');g0.label='Index';g0.appendChild(new Option('Overall score','o'));
  const g1=document.createElement('optgroup');g1.label='Domain scores';P.forEach((p,i)=>g1.appendChild(new Option(p,'p'+i)));
@@ -1630,7 +1630,7 @@ function renderP3(){ syncHash(); drawTwins();
     `<span class="note">${p3.regions.length}/4 selected</span>`;
   chips.querySelectorAll('button[data-c]').forEach(b=>b.addEventListener('click',()=>{p3.regions=p3.regions.filter(c=>c!==b.dataset.c);renderP3();}));
   fillRegionSelect(s3a,c=>!p3.regions.includes(c)); s3a.insertBefore(new Option(p3.regions.length>=4?'Remove one to add another':'Choose a region…',''),s3a.firstChild); s3a.value=''; s3a.disabled=p3.regions.length>=4;
-  const yr=p3.year, yl=yr==='latest'?`Scoring year ${SYR}`:yr;
+  const yr=p3.year, yl=yr==='latest'?String(SYR):yr;
   const list=p3.regions.map(c=>({code:c,sc:getScores(c,yr),color:colorFor(c)}));
   (()=>{ const L=list.filter(x=>x.sc&&x.sc.os!=null);
     if(L.length===2){ const [a,b]=L[1].code===NKY?[L[1],L[0]]:L; const aw=P.filter((p,i)=>(a.sc.ps[i]??-1)>(b.sc.ps[i]??-1)); const bwn=P.filter((p,i)=>(b.sc.ps[i]??-1)>(a.sc.ps[i]??-1));
