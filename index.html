@@ -1087,7 +1087,7 @@ function totalFor(code,n){return code===NKY?n+1:n;}
 // ---------- charts registry (re-render on theme change)
 const charts={}; const renderers=[];
 function chart(id){ const el=typeof id==='string'?document.getElementById(id):id; const key=el.id||el.dataset.k;
-  if(charts[key]&&!charts[key].isDisposed()) return charts[key]; const inst=echarts.init(el,null,{renderer:'svg'});
+  if(charts[key]&&!charts[key].isDisposed()){ if(charts[key].getDom()===el) return charts[key]; charts[key].dispose(); } const inst=echarts.init(el,null,{renderer:'svg'});
   if(ED_IDS.has(key)){ const orig=inst.setOption.bind(inst); inst.setOption=(o,...a)=>orig(editorial(o),...a); }
   charts[key]=inst; return inst;}
 const ED_IDS=new Set(['p2-trend','p3-trend','p3-mv','dlg-chart']);
