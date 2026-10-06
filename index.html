@@ -545,7 +545,9 @@ tr.grp td{background:none!important;border-bottom:2px solid var(--pc)!important;
 .benchg{margin-left:auto;display:flex;align-items:center;gap:8px;padding:6px 0 6px 16px;flex:none}
 .benchg label{font:700 10.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .benchg select{font:600 13px var(--f-body);padding:6px 28px 6px 10px;min-width:0;max-width:220px}
-.bseg-wrap{margin:0 0 22px}
+.bseg-wrap{display:flex;align-items:center;gap:20px 48px;flex-wrap:wrap;margin:0 0 26px;padding:0 0 22px;border-bottom:1px solid var(--line)}
+.bseg-wrap .bseg-note{flex:1 1 280px;margin:0;max-width:56ch;align-self:center;font-size:13.5px;line-height:1.55;color:var(--ink-2);border-left:2px solid var(--accent);padding-left:16px}
+.bseg-note b{display:block;font:600 15px var(--f-serif);color:var(--ink);margin-bottom:3px}
 .ov-intro p.bseg-note,.bseg-note{margin:8px 0 0;font:400 12.5px/1.5 var(--f-body);color:var(--muted);max-width:440px;border:0;padding:0}
 .bseg-note[hidden]{display:none}
 .bseg-k{display:block;font:700 11px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
@@ -575,6 +577,11 @@ tr.grp td{background:none!important;border-bottom:2px solid var(--pc)!important;
 #hl-overview .bs-but{display:block;font-style:italic;color:var(--ink-2);margin-top:4px}
 .ov-intro p.ov-lead{font:400 clamp(16px,1.15vw,18px)/1.6 var(--f-serif);color:var(--ink);border-left:3px solid var(--accent);padding-left:16px;max-width:60ch;margin:0 0 18px}
 .ov-parts{display:flex;flex-direction:column;gap:2px;max-width:62ch}
+.ov-parts.ov-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 28px;max-width:none;margin:30px 0 8px}
+.ov-row .ov-k,.ov-row .ovp-more{grid-column:1/-1}
+.ov-row .ovp{border-top:2px solid var(--ink);padding:14px 4px 14px 0}
+.ov-row .ovp-more{border-top:1px solid var(--line);margin-top:4px}
+@media (max-width:860px){.ov-parts.ov-row{grid-template-columns:1fr}.ov-row .ovp{border-top:1px solid var(--line)}}
 .ov-parts .ov-k{font:700 11px var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
 .ovp{display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;align-items:start;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:11px 6px 11px 0;color:var(--ink-2);font:400 13.5px/1.5 var(--f-body);cursor:pointer}
 .ovp:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
@@ -665,26 +672,26 @@ footer{border-top:0!important;padding-top:0!important}
 <main class="wrap">
 <!-- PAGE 0: OVERVIEW -->
 <section class="page" id="page-overview">
+  <h1 class="sr-only">Northern Kentucky Economic Prosperity Index</h1>
+  <div class="bseg-wrap"><div class="bseg-main"><span class="bseg-k" id="bseg-k">Compare Northern Kentucky with · select a map</span><div class="bseg" id="bench-o" role="group" aria-labelledby="bseg-k">
+        <button type="button" data-b="us" aria-pressed="true"><i class="bmini"></i><b>United States</b><span>Index of 196 metros</span></button>
+        <button type="button" data-b="mid" aria-pressed="false"><i class="bmini"></i><b>Middle America</b><span>Index of 55 metros</span></button></div></div><p class="bseg-note" id="bseg-note" hidden></p></div>
   <div class="ov-hero">
     <div class="ov-intro">
-      <h1 class="sr-only">Northern Kentucky Economic Prosperity Index</h1>
-      <div class="bseg-wrap"><span class="bseg-k" id="bseg-k">Compare Northern Kentucky with · select a map</span><div class="bseg" id="bench-o" role="group" aria-labelledby="bseg-k">
-        <button type="button" data-b="us" aria-pressed="true"><i class="bmini"></i><b>United States</b><span>Index of 196 metros</span></button>
-        <button type="button" data-b="mid" aria-pressed="false"><i class="bmini"></i><b>Middle America</b><span>Index of 55 metros</span></button></div><p class="bseg-note" id="bseg-note" hidden></p></div>
       <h2 class="headline" id="hl-overview"></h2>
       <p class="ov-lead">Northern Kentucky’s economy is usually reported as part of the Cincinnati metro, which hides how Boone, Kenton, and Campbell counties are doing on their own. This index measures the three counties together against metros of 250,000+ residents, across the nation or within the region, giving funders, partners, and policymakers one consistent picture of where the region leads, where it lags, and whether it is moving in the right direction.</p>
-      <div class="ov-parts">
+    </div>
+    <div class="emwrap"><figure class="emblem" id="ov-emblem" aria-label="Map of Boone, Kenton, and Campbell counties along the Ohio and Licking rivers"></figure>
+      <div class="emctl"><label class="lab" for="ov-cmetric">Shade counties by</label><select id="ov-cmetric"></select></div>
+      <div class="emleg" id="ov-cleg"></div><div class="maptip" id="ov-ctip" hidden></div></div>
+  </div>
+      <div class="ov-parts ov-row">
         <div class="ov-k">What this dashboard does</div>
         <button type="button" class="ovp" data-go="metrics"><span class="ovp-n">1</span><span><b>Tracks 30 regional metrics</b>Growth, wealth, labor market, innovation, education, and quality of life, with trends back to 2015 and comparisons to Cincinnati and the typical <span data-bt="metro">U.S. metro</span>.</span></button>
         <button type="button" class="ovp" data-go="goals"><span class="ovp-n">2</span><span><b>Sets goals to reach by 2030</b>Eight priority targets chosen by BE NKY Growth Partnership, each checked every year against the path needed to hit it.</span></button>
         <button type="button" class="ovp" data-go="index"><span class="ovp-n">3</span><span><b>Scores overall prosperity</b>A Prosperity Index that rolls all 30 metrics into one 0 to 10 score and ranks Northern Kentucky against <span data-bt="nm">196 U.S. metros</span>.</span></button>
         <p class="ovp-more">Use the <button type="button" class="linkbtn" data-go="map">Map</button> to see every metro at once, or <button type="button" class="linkbtn" data-go="compare">Compare Regions</button> to line Northern Kentucky up against any peer.</p>
       </div>
-    </div>
-    <div class="emwrap"><figure class="emblem" id="ov-emblem" aria-label="Map of Boone, Kenton, and Campbell counties along the Ohio and Licking rivers"></figure>
-      <div class="emctl"><label class="lab" for="ov-cmetric">Shade counties by</label><select id="ov-cmetric"></select></div>
-      <div class="emleg" id="ov-cleg"></div><div class="maptip" id="ov-ctip" hidden></div></div>
-  </div>
   <div class="twin-cta ov-cta">
     <div class="tc-row"><div><h4>Want to see how Northern Kentucky scores on the Prosperity Index?</h4><p class="sub">See the region’s overall 0 to 10 score, how it ranks against <span data-bt="nm">196 U.S. metros</span>, and its score on each of the 30 metrics.</p></div>
       <div class="ov-cta-act"><button type="button" class="btn tc-btn" data-go="index">View the Prosperity Index</button><button class="linkbtn dl-only" type="button" onclick="window.__scorecard&&window.__scorecard()">Download scorecard (PDF)</button></div></div>
@@ -2032,8 +2039,8 @@ document.getElementById('g-pdf').addEventListener('click',()=>window.__scorecard
 function syncBenchUI(){ document.querySelectorAll('[data-bt]').forEach(e=>{e.textContent=BT(e.dataset.bt);});
   document.querySelectorAll('#bench-o button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.b===BK)));
   const g=document.getElementById('bench-g'); if(g) g.value=BK;
-  const nt=document.getElementById('bseg-note'); if(nt){ nt.hidden=BK==='us';
-    nt.textContent=BK==='mid'?'Middle America: Illinois, Indiana, Iowa, Kansas, Kentucky, Michigan, Minnesota, Missouri, Nebraska, North Dakota, Ohio, Pennsylvania, South Dakota, Tennessee, West Virginia, and Wisconsin.':BK==='oki'?'A comparison, not a separate index: scores stay on the national scale and ranks count only the metros in Ohio, Indiana, and Kentucky.':''; }
+  const nt=document.getElementById('bseg-note'); if(nt){ nt.hidden=false;
+    nt.innerHTML=BK==='mid'?'<b>Middle America</b>Illinois, Indiana, Iowa, Kansas, Kentucky, Michigan, Minnesota, Missouri, Nebraska, North Dakota, Ohio, Pennsylvania, South Dakota, Tennessee, West Virginia, and Wisconsin.':BK==='us'?'<b>United States</b>Every metro of 250,000+ residents in the country, 196 in all. Select Middle America to re-score Northern Kentucky against its own region.':BK==='oki'?'A comparison, not a separate index: scores stay on the national scale and ranks count only the metros in Ohio, Indiana, and Kentucky.':''; }
   document.documentElement.dataset.bench=BK; }
 function setBench(k){ if(k===BK||!BENCH[k]) return; applyBenchData(k); TWINS=calcTwins(); sim.v=null;
   if(!inBench(p2.region)) p2.region=NKY; fillRegionSelect(s2r); s2r.value=p2.region;
