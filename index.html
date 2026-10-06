@@ -600,6 +600,14 @@ tr.grp td{background:none!important;border-bottom:2px solid var(--pc)!important;
 .ov-doms .od .tr i{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
 .ov-doms .od:hover{border-color:var(--axis);border-top-color:var(--pc);background:color-mix(in srgb,var(--pc) 6%,var(--surface))}
 @media (max-width:560px){.ov-doms{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:901px){
+ .ov-hero{align-items:stretch}
+ .ov-intro{display:flex;flex-direction:column;justify-content:center;gap:clamp(28px,4vh,48px);padding:12px 0}
+ #hl-overview{margin:0;row-gap:14px}
+ #hl-overview .bs-k{margin-bottom:4px}
+ #hl-overview .bs-but{margin-top:10px}
+ .ov-intro p.ov-lead{margin:0;line-height:1.75;padding:4px 0 4px 20px}
+}
 @media (max-width:520px){#hl-overview{grid-template-columns:1fr}#hl-overview .bs-t{max-width:none;padding-top:6px}}
 .fprow figure{padding:0 34px}
 .fprow figure .fp svg{overflow:visible}
