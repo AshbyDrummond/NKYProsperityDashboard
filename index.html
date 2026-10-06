@@ -540,7 +540,7 @@ tr.grp td{background:none!important;border-bottom:2px solid var(--pc)!important;
 .mast-t{flex:0 1 clamp(420px,36vw,680px)!important;max-width:clamp(420px,36vw,680px)!important}
 @media (max-width:760px){.mast-t{flex:1 1 100%!important;max-width:none!important}.mast .logo{height:48px!important}}
 /* overview hero statement */
-#hl-overview{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:22px;align-items:end;max-width:none;margin:6px 0 18px}
+#hl-overview{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:22px;align-items:stretch;max-width:none;margin:6px 0 18px}
 #hl-overview .bs-k{grid-column:1/-1;font:700 clamp(18px,1.7vw,24px)/1.2 var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);margin-bottom:6px}
 .benchg{margin-left:auto;display:flex;align-items:center;gap:8px;padding:6px 0 6px 16px;flex:none}
 .benchg label{font:700 10.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -573,8 +573,11 @@ tr.grp td{background:none!important;border-bottom:2px solid var(--pc)!important;
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 #hl-overview .bs-n{font:700 clamp(84px,9vw,132px)/.82 var(--f-fig);color:var(--s1);letter-spacing:-.02em;white-space:nowrap}
 #hl-overview .bs-n i{font-style:normal;font-weight:500;font-size:.45em;color:var(--ink-2);letter-spacing:0;vertical-align:.55em;margin:0 .06em}
-#hl-overview .bs-t{font:500 clamp(19px,1.7vw,24px)/1.3 var(--f-serif);color:var(--ink);padding-bottom:6px;max-width:24ch}
-#hl-overview .bs-but{display:block;font-style:italic;color:var(--ink-2);margin-top:4px}
+#hl-overview .bs-t{font:500 clamp(18px,1.6vw,23px)/1.15 var(--f-serif);color:var(--ink);align-self:stretch;display:flex;flex-direction:column;justify-content:space-between;padding:.05em 0 0;margin-bottom:-.18em}
+#hl-overview .bs-t .bl{display:block}
+#hl-overview .bs-but{display:contents;font-style:italic;color:var(--ink-2)}
+#hl-overview .bs-but .bl{font-style:italic;color:var(--ink-2)}
+#hl-overview .bs-t.al .bl{display:block;white-space:nowrap}
 .ov-intro p.ov-lead{font:400 clamp(16px,1.15vw,18px)/1.6 var(--f-serif);color:var(--ink);border-left:3px solid var(--accent);padding-left:16px;max-width:60ch;margin:0 0 18px}
 .ov-parts{display:flex;flex-direction:column;gap:2px;max-width:62ch}
 .ov-parts.ov-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 28px;max-width:none;margin:30px 0 8px}
@@ -605,7 +608,7 @@ tr.grp td{background:none!important;border-bottom:2px solid var(--pc)!important;
  .ov-intro{display:flex;flex-direction:column;justify-content:center;gap:clamp(28px,4vh,48px);padding:12px 0}
  #hl-overview{margin:0;row-gap:14px}
  #hl-overview .bs-k{margin-bottom:4px}
- #hl-overview .bs-but{margin-top:10px}
+ #hl-overview .bs-but{margin-top:0}
  .ov-intro p.ov-lead{margin:0;line-height:1.75;padding:4px 0 4px 20px}
 }
 @media (max-width:520px){#hl-overview{grid-template-columns:1fr}#hl-overview .bs-t{max-width:none;padding-top:6px}}
@@ -1700,7 +1703,7 @@ function drawEmblem(){ const fig=document.getElementById('ov-emblem'); fig.inner
 function renderP0(){
   const sc=getScores(NKY,'latest'); const bt=beatCount(NKY,sc); const bw=bestWorst(sc);
   { const h=heroParts(sc); const big=h.b?`${h.a}<i> ${h.conn} </i>${h.b}`:h.a;
-    setHL('hl-overview', `<span class="bs-k">${h.kick}</span><span class="bs-n">${big}</span><span class="bs-t">${esc(h.line.replace(/,$/,''))}, <span class="bs-but">${esc(h.tail)}</span></span>`); }
+    setHL('hl-overview', `<span class="bs-k">${h.kick}</span><span class="bs-n">${big}</span><span class="bs-t"><span class="bl">${esc(h.line)}</span><span class="bs-but">${(()=>{const w=h.tail.split(' '); let best=1,bd=1e9; for(let i=1;i<w.length;i++){const d=Math.abs(w.slice(0,i).join(' ').length-w.slice(i).join(' ').length); if(d<bd){bd=d;best=i;}} return `<span class="bl">${esc(w.slice(0,best).join(' '))}</span> <span class="bl">${esc(w.slice(best).join(' '))}</span>`;})()}</span></span>`);  }
   if(document.getElementById('ov-doms')) document.getElementById('ov-doms').innerHTML=`<span class="od-k">Six domains<em>Score out of 10</em></span>`+P.map((p,i)=>{const v=sc.ps[i]; return `<button type="button" class="od" data-pi="${i}" style="--pc:var(--p${i})" aria-label="${esc(p)} ${v==null?'':v.toFixed(1)+' out of 10'}"><span class="nm">${dicon(i,'sm')}${esc(p)}</span><span class="v" style="color:${v==null?'var(--muted)':scoreText(v)}">${v==null?'\u2014':v.toFixed(1)}</span><span class="tr"><i style="width:${v==null?0:v*10}%;background:${v==null?'transparent':scoreText(v)}"></i></span></button>`;}).join('');
   if(0) document.querySelectorAll('#ov-doms .od').forEach(b=>b.addEventListener('click',()=>{const c=document.querySelectorAll('#ov-pillars .pcard')[+b.dataset.pi]; if(c) c.scrollIntoView({behavior:'smooth',block:'start'});}));
   drawEmblem();
