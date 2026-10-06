@@ -714,6 +714,10 @@ body.no-share .copylink{display:none}
 #p3-fps.two figure .fp{max-width:480px}
 /* map: neighbors */
 #p5-near .sub{margin:0 0 4px}
+.bseg-dl{margin-left:auto;display:flex;flex-direction:column;gap:9px;align-items:flex-start;flex:none;align-self:center}
+.bseg-dl .bseg-k{margin:0}
+.bseg-dl-sub{font-size:12px;color:var(--muted)}
+@media (max-width:1100px){.bseg-dl{margin-left:0;flex:1 1 100%;flex-direction:row;align-items:center;gap:14px;flex-wrap:wrap}}
 /* print */
 @media print{
   @page{margin:12mm}
@@ -754,7 +758,8 @@ body.no-share .copylink{display:none}
   <h1 class="sr-only">Northern Kentucky Prosperity Dashboard</h1>
   <div class="bseg-wrap"><div class="bseg-main"><span class="bseg-k" id="bseg-k">Compare Northern Kentucky with · select a map</span><div class="bseg" id="bench-o" role="group" aria-labelledby="bseg-k">
         <button type="button" data-b="us" aria-pressed="true"><i class="bmini"></i><b>United States</b><span>Index of 196 metros</span></button>
-        <button type="button" data-b="mid" aria-pressed="false"><i class="bmini"></i><b>Middle America</b><span>Index of 55 metros</span></button></div></div><p class="bseg-note" id="bseg-note" hidden></p></div>
+        <button type="button" data-b="mid" aria-pressed="false"><i class="bmini"></i><b>Middle America</b><span>Index of 55 metros</span></button></div></div><p class="bseg-note" id="bseg-note" hidden></p>
+    <div class="bseg-dl dl-only"><span class="bseg-k">One-page summary</span><button type="button" class="btn tc-btn" id="ov-pdf">Download scorecard (PDF)</button><span class="bseg-dl-sub">Score, rank, domains, and goals on one page.</span></div></div>
   <div class="ov-hero">
     <div class="ov-intro">
       <h2 class="headline" id="hl-overview"></h2>
@@ -773,7 +778,7 @@ body.no-share .copylink{display:none}
       </div>
   <div class="twin-cta ov-cta">
     <div class="tc-row"><div><h4>Want to see how Northern Kentucky scores on the Prosperity Index?</h4><p class="sub">See the region’s overall 0 to 10 score, how it ranks against <span data-bt="nm">196 U.S. metros</span>, and its score on each of the 30 metrics.</p></div>
-      <div class="ov-cta-act"><button type="button" class="btn tc-btn" data-go="index">View the Prosperity Index</button><button class="linkbtn dl-only" type="button" onclick="window.__scorecard&&window.__scorecard()">Download scorecard (PDF)</button></div></div>
+      <div class="ov-cta-act"><button type="button" class="btn tc-btn" data-go="index">View the Prosperity Index</button></div></div>
   </div>
   <div class="cable-div" aria-hidden="true"></div>
   <div class="ov-sec">
@@ -2336,6 +2341,7 @@ window.__pdfGoals=async function(){ const R=await pdfStart('Goals for 2030','Nor
   offer(`NKY Goals for 2030.pdf`,doc.output('blob'));
 };
 document.getElementById('g-pdf').addEventListener('click',()=>window.__pdfGoals());
+document.getElementById('ov-pdf')?.addEventListener('click',()=>window.__scorecard());
 document.getElementById('m-pdf')?.addEventListener('click',()=>window.__pdfMetrics());
 document.getElementById('i-pdf')?.addEventListener('click',()=>window.__pdfIndex());
 
