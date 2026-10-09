@@ -807,6 +807,42 @@ body.no-share .copylink{display:none}
 .ldist svg{display:block;width:100%;height:auto}
 .ldist circle{cursor:pointer}
 #l-map text.lhide{display:none!important}
+/* scenario fan */
+.scen .scenfig{margin:14px 0 0;position:relative}
+.scen svg{display:block;width:100%;height:auto;overflow:visible}
+.scenpath{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.scenhist{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.scenhaze{fill:none;stroke-width:1;opacity:.1}
+.scenstall{fill:none;stroke:var(--median);stroke-width:1.6;stroke-dasharray:4 4}
+.scenlab{font:600 11.5px var(--f-body)}
+.scenax{font:11px var(--f-body);fill:var(--muted)}
+.scengrid{stroke:var(--line);stroke-width:1}
+.scenaxis{stroke:var(--axis);stroke-width:1}
+.scennow{stroke:var(--axis);stroke-width:1;stroke-dasharray:3 3}
+.scenkey{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px}
+.scenkey span{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+.scenkey i{width:16px;height:0;border-top-width:3px;border-top-style:solid;border-radius:2px;flex:none}
+.scenkey i.dash{border-top-style:dashed;border-top-width:2px}
+.scencap{font-size:12.5px;color:var(--ink-2);margin:10px 0 0;line-height:1.5}
+.scentip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:5;min-width:150px}
+.scentip b{display:block;font-size:12.5px;margin-bottom:5px;color:var(--ink)}
+.scentip .r{display:flex;align-items:center;gap:7px;justify-content:space-between;color:var(--ink-2);padding:1px 0}
+.scentip .r i{width:9px;height:9px;border-radius:50%;flex:none}
+.scentip .r em{font-style:normal;flex:1}
+.scentip .r b{display:inline;margin:0;font-variant-numeric:tabular-nums}
+.scentbl{margin-top:12px}
+.scentbl summary{cursor:pointer;font:700 10.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);padding:10px 0;border-top:1px solid var(--line);list-style:none}
+.scentbl summary::-webkit-details-marker{display:none}
+.scentbl summary::after{content:'\25BE';color:var(--muted);font-size:12px;float:right}
+.scentbl[open] summary::after{transform:rotate(180deg);display:inline-block}
+.scentbl table{width:100%;border-collapse:collapse;font-size:12.5px}
+.scentbl th,.scentbl td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+.scentbl td.n,.scentbl th.n{text-align:right;font-variant-numeric:tabular-nums}
+.scentbl td .sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+/* overview teaser */
+.scenmini{margin-top:4px}
+.scenmini svg{display:block;width:100%;height:auto;overflow:visible}
+@media print{.scentip{display:none!important}}
 /* print */
 @media print{
   @page{margin:12mm}
@@ -874,8 +910,10 @@ body.no-share .copylink{display:none}
         <p class="ovp-more">Use the <button type="button" class="linkbtn" data-go="map">Map</button> to see every metro at once, <button type="button" class="linkbtn" data-go="compare">Compare Regions</button> to line Northern Kentucky up against any peer, or <button type="button" class="linkbtn" data-go="local">Inside NKY</button> to go the other way and map the region from the inside, by county, census tract, or city, across housing, income, commuting, and who lives where.</p>
       </div>
   <div class="twin-cta ov-cta">
-    <div class="tc-row"><div><h4>Want to see how Northern Kentucky scores on the Prosperity Index?</h4><p class="sub">See the region’s overall 0 to 10 score, how it ranks against <span data-bt="nm">196 U.S. metros</span>, and its score on each of the 30 metrics.</p></div>
+    <div class="tc-row"><div><h4>Want to see how Northern Kentucky scores on the Prosperity Index?</h4><p class="sub" id="ov-scen-sub">See the region’s overall 0 to 10 score, how it ranks against <span data-bt="nm">196 U.S. metros</span>, and where four different futures would take it.</p></div>
       <div class="ov-cta-act"><button type="button" class="btn tc-btn" data-go="index">View the Prosperity Index</button></div></div>
+    <figure class="scenmini"><svg id="ov-scen-svg" role="img" aria-label="Four projected paths for Northern Kentucky's overall Prosperity Index score through 2035"></svg></figure>
+    <div class="scenkey" id="ov-scen-key"></div>
   </div>
   <div class="cable-div" aria-hidden="true"></div>
   <div class="ov-sec">
@@ -926,6 +964,16 @@ body.no-share .copylink{display:none}
       <div class="ctl"><label class="lab" for="p2-metric">Chart</label><select id="p2-metric"></select></div></div>
     <div id="p2-trend" class="chart"></div>
     <div class="why" id="p2-why" hidden></div>
+  </div>
+  <div class="panel scen" id="scen">
+    <div class="lede" style="align-items:flex-start"><div><h4>Four futures for Northern Kentucky</h4>
+      <p class="sub">Ten years of history, then ten years forward under four rules. These are not forecasts: each path simply carries a rule out to 2035, and every rule is drawn from what has already happened.</p></div>
+      <div class="ctl"><label class="lab" for="scen-metric">Chart</label><select id="scen-metric"></select></div></div>
+    <figure class="scenfig"><svg id="scen-svg" role="img" aria-labelledby="scen-cap"></svg><div class="scentip" id="scen-tip" hidden></div></figure>
+    <figcaption class="scencap" id="scen-cap"></figcaption>
+    <div class="scenkey" id="scen-key"></div>
+    <details class="scentbl"><summary>Where each path lands</summary><div id="scen-tblbody"></div></details>
+    <p class="note" id="scen-note"></p>
   </div>
   <div class="panel sim" id="sim">
     <div class="lede" style="align-items:flex-start"><div><h4>What would it take?</h4><p class="sub">Move one of Northern Kentucky’s metrics and see how its domain score and overall rank would respond, with every other metro held where it is.</p></div>
@@ -1595,6 +1643,202 @@ function simScore(mz){ const out={ps:[],pr:[]};
     out.ps.push(Math.round(d.pz.filter(x=>x<pz).length/d.pz.length*100+1e-9)/10); out.pr.push(d.pz.filter(x=>x>pz).length+1); });
   const all=mz.filter(z=>z!=null); const oz=(all.reduce((a,b)=>a+b,0)/all.length-SIM.ov.mu)/SIM.ov.sd;
   out.os=Math.round(SIM.ov.oz.filter(x=>x<oz).length/SIM.ov.oz.length*100+1e-9)/10; out.or=SIM.ov.oz.filter(x=>x>oz).length+1; return out; }
+
+// =============== SCENARIOS: four futures
+// Every path is a rule carried forward, never a forecast. The benchmark moves too: the metro
+// distribution each metric is scored against drifts at the median metro's own rate, so standing
+// still costs ground and matching the median holds position, as they would in the real league.
+const SCEN_END=2035, SCEN_BASE=SIM.m[0].yr;
+const SCEN=[
+  {id:'stall', name:'Stall', col:()=>css('--median'), dash:true,
+   blurb:'every metric holds exactly where it is today'},
+  {id:'peer', name:'Peer pace', col:()=>css('--s2'),
+   blurb:'every metric moves at the rate the median metro has moved since 2015'},
+  {id:'recent', name:'Recent pace', col:()=>css('--s1'),
+   blurb:'every metric carries on its own 2015 to 2024 trend'},
+  {id:'top', name:'Top quartile', col:()=>css('--local'),
+   blurb:'every metric below the top-quartile metro closes that gap by 2035'}];
+// annual change per metric, measured on the scale the index scores it on
+function scenSlope(series){ const f=firstIdx(series), l=lastIdx(series); return (l<=f)?null:[f,l]; }
+function scenRates(){ const out=[];
+  for(let k=0;k<M.length;k++){ const nk=D.values[NKY][k], md=D.median[k];
+    const rate=arr=>{ const r=scenSlope(arr); if(!r) return 0; const [f,l]=r;
+      const a=simT(k,arr[f]), b=simT(k,arr[l]); return (b-a)/(Y[l]-Y[f]); };
+    const base=SIM.m[k].nky, q=SIM.m[k].q, dir=SIM.m[k].dir;
+    const goal=dir>0?Math.max(base??q[2],q[2]):Math.min(base??q[0],q[0]);
+    out.push({own:rate(nk), med:rate(md), base, goal}); }
+  return out; }
+let scenRate=scenRates();
+// a metric's value in one future year under one rule
+function scenValue(k,rule,yr){ const r=scenRate[k], b=r.base; if(b==null) return null;
+  const t=yr-SCEN_BASE; if(t<=0) return b;
+  if(rule==='stall') return b;
+  if(rule==='peer') return simI(k, simT(k,b)+r.med*t);
+  if(rule==='recent') return simI(k, simT(k,b)+r.own*t);
+  // the top quartile is a moving mark: it drifts with the rest of the distribution
+  const span=SCEN_END-SCEN_BASE, f=Math.min(1,t/span), goal=simT(k,r.goal)+r.med*span;
+  return simI(k, simT(k,b)+(goal-simT(k,b))*f); }
+// the benchmark a projected value is scored against, drifted t years at the median metro's rate
+function scenZ(k,v,t){ const m=SIM.m[k]; if(v==null) return null;
+  const mu=m.mu+scenRate[k].med*t;
+  return Math.max(-3,Math.min(3,m.dir*(simT(k,v)-mu)/m.sd)); }
+const SCEN_YRS=(()=>{const a=[];for(let y=SCEN_BASE;y<=SCEN_END;y++)a.push(y);return a;})();
+// score path for a rule, or value path when a single metric is charted
+let scenCache={};
+function scenReset(){ scenRate=scenRates(); scenCache={}; }
+function scenPath(rule,k){ const key=rule+'|'+k; if(scenCache[key]) return scenCache[key];
+  const out=SCEN_YRS.map(y=>{
+    if(k>=0) return scenValue(k,rule,y);
+    const t=y-SCEN_BASE;
+    const mz=M.map((m,i)=>scenZ(i,scenValue(i,rule,y),t));
+    return simScore(mz).os; });
+  return scenCache[key]=out; }
+function scenHistory(k){ return k>=0
+  ? Y.map((y,i)=>y<=SCEN_BASE?D.values[NKY][k][i]:null).filter((v,i)=>Y[i]<=SCEN_BASE)
+  : SY.filter(y=>y<=SCEN_BASE).map(y=>getScores(NKY,y)?.os??null); }
+const scenHistYrs=k=>k>=0?Y.filter(y=>y<=SCEN_BASE):SY.filter(y=>y<=SCEN_BASE);
+const scenFmt=(k,v)=>v==null?'—':(k>=0?fmt(k,v):v.toFixed(1));
+const scenTitle=k=>k>=0?SHORT[k]:'Overall score';
+
+const scen={k:-1,anim:true};
+function drawScen(opts){
+  const host=document.getElementById(opts.svg); if(!host) return;
+  const k=opts.mini?-1:scen.k, mini=!!opts.mini;
+  // the viewBox scales to the container, so a narrower box on a phone makes the type bigger
+  const narrow=(host.clientWidth||host.parentNode.clientWidth||900)<620;
+  const W=narrow?560:975, H=narrow?(mini?230:330):(mini?250:430),
+        L=narrow?(mini?34:40):(mini?42:52), R=narrow?122:(mini?96:132),
+        T=mini?14:20, B=narrow?34:(mini?24:34);
+  // font-size inside the SVG is in viewBox units, so a narrow box needs bigger numbers
+  // for the type to come out the same size on screen
+  const FL=narrow?15.5:11.5, FA=narrow?14:11, LH=Math.round(FL*1.3), GAP=Math.round(FL*2.7);
+  const hy=scenHistYrs(k), hv=scenHistory(k);
+  const paths=SCEN.map(sc=>({sc,v:scenPath(sc.id,k)}));
+  const all=hv.concat(...paths.map(p=>p.v)).filter(v=>v!=null);
+  if(!all.length){ host.innerHTML=''; return; }
+  let lo=Math.min(...all), hi=Math.max(...all);
+  if(k<0){ lo=Math.max(0,Math.floor(lo-0.6)); hi=Math.min(10,Math.ceil(hi+0.6)); }
+  else { const pad=(hi-lo)*0.12||Math.abs(hi)*0.08||1; lo-=pad; hi+=pad; if(FT[k].startsWith('pct')){lo=Math.max(0,lo);hi=Math.min(1,hi);} }
+  const y0=Y[0], X=y=>L+(y-y0)/(SCEN_END-y0)*(W-L-R), Yp=v=>T+(hi-v)/(hi-lo||1)*(H-T-B);
+  const line=(ys,vs)=>{ let d='',pen=false;
+    vs.forEach((v,i)=>{ if(v==null){pen=false;return;} d+=(pen?'L':'M')+X(ys[i]).toFixed(1)+','+Yp(v).toFixed(1); pen=true; });
+    return d; };
+  const ticks=k<0?[0,2,4,6,8,10].filter(v=>v>=lo-.01&&v<=hi+.01):(()=>{const n=4,a=[];for(let i=0;i<=n;i++)a.push(lo+(hi-lo)*i/n);return a;})();
+  const xt=(narrow?[2015,SCEN_BASE,2035]:[2015,2020,SCEN_BASE,2030,2035]).filter(y=>y>=y0);
+  let g='';
+  ticks.forEach(v=>{ g+=`<line class="scengrid" x1="${L}" y1="${Yp(v).toFixed(1)}" x2="${W-R}" y2="${Yp(v).toFixed(1)}"/>`
+    +`<text class="scenax" x="${L-8}" y="${(Yp(v)+4).toFixed(1)}" text-anchor="end" style="font-size:${FA}px">${k<0?v:fmt(k,v,true)}</text>`; });
+  xt.forEach(y=>{ g+=`<text class="scenax" x="${X(y).toFixed(1)}" y="${H-B+FA+7}" text-anchor="middle" style="font-size:${FA}px">${y}</text>`; });
+  g+=`<line class="scennow" x1="${X(SCEN_BASE).toFixed(1)}" y1="${T}" x2="${X(SCEN_BASE).toFixed(1)}" y2="${H-B}"/>`;
+  if(!mini&&!narrow) g+=`<text class="scenax" x="${(X(SCEN_BASE)+6).toFixed(1)}" y="${T+12}" style="font-size:${FA}px">projected →</text>`;
+  // the space between the outer paths, as faint lines, so the fan reads as a range not four options
+  const envLo=SCEN_YRS.map((y,i)=>Math.min(...paths.map(p=>p.v[i]).filter(v=>v!=null))),
+        envHi=SCEN_YRS.map((y,i)=>Math.max(...paths.map(p=>p.v[i]).filter(v=>v!=null)));
+  const nh=mini?8:13;
+  for(let j=1;j<nh;j++){ const f=j/nh;
+    const vs=SCEN_YRS.map((y,i)=>envLo[i]+(envHi[i]-envLo[i])*f);
+    g+=`<path class="scenhaze scenanim" stroke="${css('--accent')}" d="${line(SCEN_YRS,vs)}"/>`; }
+  // the four named paths, then the history spine on top
+  paths.forEach(p=>{ const c=p.sc.col();
+    g+=`<path class="${p.sc.dash?'scenstall':'scenpath'} scenanim" ${p.sc.dash?'':`stroke="${c}" stroke-width="${mini?2:2.4}"`} d="${line(SCEN_YRS,p.v)}"/>`; });
+  g+=`<path class="scenhist scenanim" d="${line(hy,hv)}"/>`;
+  // direct labels at the right end: identity never rests on color alone
+  const ends=paths.map(p=>({t:p.sc.name,v:p.v[p.v.length-1],c:p.sc.dash?css('--median'):p.sc.col()}))
+    .filter(e=>e.v!=null).sort((a,b)=>Yp(a.v)-Yp(b.v));
+  // each label is two lines, the name over its value, so they need the room for both;
+  // the stack is then nudged back inside the plot so it never lands on the year axis
+  let prev=-1e9; const ys=ends.map(e=>{ let y=Yp(e.v)+4; if(y-prev<GAP) y=prev+GAP; prev=y; return y; });
+  if(ys.length){ const over=(ys[ys.length-1]+LH)-(H-B-2); if(over>0){ const sh=Math.min(over,ys[0]-(T+10));
+      if(sh>0) for(let i=0;i<ys.length;i++) ys[i]-=sh; } }
+  ends.forEach((e,i)=>{ const y=ys[i];
+    g+=`<text class="scenlab scenfade" x="${W-R+10}" y="${y.toFixed(1)}" fill="${e.c}" style="font-size:${FL}px">${esc(e.t)}</text>`
+      +`<text class="scenax scenfade" x="${W-R+10}" y="${(y+LH).toFixed(1)}" style="font-size:${FA}px">${scenFmt(k,e.v)}</text>`; });
+  const lastH=hv[lastIdx(hv)];
+  g+=`<circle class="scenfade" cx="${X(SCEN_BASE).toFixed(1)}" cy="${Yp(lastH).toFixed(1)}" r="3.4" fill="${css('--ink')}"/>`;
+  host.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  host.innerHTML=g;
+  if(scen.anim&&!mini) scenAnimate(host);
+  else if(mini) scenAnimate(host,true);
+  return {X,Yp,k,paths,hy,hv,W,H,L,R,T,B};
+}
+const scenReduce=()=>{ try{ return matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } };
+function scenAnimate(host,slow){
+  if(scenReduce()) return;
+  host.querySelectorAll('.scenanim').forEach((el,i)=>{ let len=0; try{len=el.getTotalLength();}catch(e){return;}
+    if(!len) return; const haze=el.classList.contains('scenhaze'), hist=el.classList.contains('scenhist');
+    const dur=hist?700:(slow?1400:1000), delay=hist?0:(haze?520+i*6:560+i*70);
+    el.style.strokeDasharray=el.classList.contains('scenstall')?'':len+' '+len;
+    if(el.classList.contains('scenstall')) return;
+    el.style.strokeDashoffset=len; el.style.transition=`stroke-dashoffset ${dur}ms cubic-bezier(.3,.7,.3,1) ${delay}ms`;
+    requestAnimationFrame(()=>{el.style.strokeDashoffset='0';}); });
+  host.querySelectorAll('.scenstall').forEach(el=>{ el.style.opacity='0'; el.style.transition='opacity 500ms 500ms'; requestAnimationFrame(()=>el.style.opacity='1'); });
+  host.querySelectorAll('.scenfade').forEach(el=>{ el.style.opacity='0'; el.style.transition='opacity 520ms 1180ms'; requestAnimationFrame(()=>el.style.opacity='1'); });
+}
+
+function renderScenMini(){
+  const host=document.getElementById('ov-scen-svg'); if(!host) return;
+  drawScen({svg:'ov-scen-svg',mini:true});
+  document.getElementById('ov-scen-key').innerHTML=SCEN.map(sc=>
+    `<span><i class="${sc.dash?'dash':''}" style="border-top-color:${sc.dash?css('--median'):sc.col()}"></i>${esc(sc.name)}</span>`).join('')
+    +`<span><i style="border-top-color:${css('--ink')}"></i>Actual</span>`;
+}
+function renderScen(){
+  const sel=document.getElementById('scen-metric');
+  if(sel && !sel.options.length){
+    sel.appendChild(new Option('Overall score','-1'));
+    P.forEach(p=>{const g=document.createElement('optgroup');g.label=p;
+      M.forEach((m,k)=>{if(m.pillar===p&&SIM.m[k].nky!=null)g.appendChild(new Option(SHORT[k],String(k)));});sel.appendChild(g);});
+    sel.value='-1';
+    sel.addEventListener('change',()=>{scen.k=+sel.value;scen.anim=true;renderScen();});
+  }
+  const G=drawScen({svg:'scen-svg'}); if(!G) return;
+  const k=scen.k;
+  document.getElementById('scen-key').innerHTML=SCEN.map(sc=>
+    `<span><i class="${sc.dash?'dash':''}" style="border-top-color:${sc.dash?css('--median'):sc.col()}"></i>${esc(sc.name)}</span>`).join('')
+    +`<span><i style="border-top-color:${css('--ink')}"></i>Actual, 2015 to ${SCEN_BASE}</span>`;
+  const now=scenPath('stall',k)[0];
+  document.getElementById('scen-cap').textContent=
+    `${scenTitle(k)} for Northern Kentucky. The line to ${SCEN_BASE} is what happened; everything after it is a rule carried forward to ${SCEN_END}.`;
+  const rows=SCEN.map(sc=>{const v=scenPath(sc.id,k); return {sc,end:v[v.length-1]};});
+  document.getElementById('scen-tblbody').innerHTML=
+    `<table><thead><tr><th>Path</th><th>What the rule is</th><th class="n">${SCEN_BASE}</th><th class="n">${SCEN_END}</th></tr></thead><tbody>`
+    +rows.map(r=>`<tr><td><span class="sw" style="background:${r.sc.dash?css('--median'):r.sc.col()}"></span>${esc(r.sc.name)}</td>`
+      +`<td>${esc(r.sc.blurb)}</td><td class="n">${scenFmt(k,now)}</td><td class="n">${scenFmt(k,r.end)}</td></tr>`).join('')
+    +'</tbody></table>';
+  document.getElementById('scen-note').textContent=
+    `The ${BN()} ${B().metros} Northern Kentucky is scored against keep moving in every path, each metric drifting at the median metro's own 2015 to ${SCEN_BASE} rate. That is why standing still costs ground and why matching the median holds position rather than winning. The top-quartile mark moves with them. A score is the share of those metros outperformed, times 10, so it measures position in the pack, not absolute progress.`;
+  scenHover(G);
+  scen.anim=false;
+}
+let scenRz=null, scenW=0;
+window.addEventListener('resize',()=>{ const w=window.innerWidth; if(Math.abs(w-scenW)<40) return; scenW=w;
+  clearTimeout(scenRz); scenRz=setTimeout(()=>{ scen.anim=false;
+    if(document.getElementById('scen-svg')&&!document.getElementById('page-index').hidden) renderScen();
+    if(document.getElementById('ov-scen-svg')) renderScenMini(); },220); });
+function scenHover(G){
+  const svg=document.getElementById('scen-svg'), tip=document.getElementById('scen-tip'), fig=svg.parentNode;
+  if(svg._scen) svg.removeEventListener('pointermove',svg._scen);
+  const cur=document.createElementNS('http://www.w3.org/2000/svg','line');
+  cur.setAttribute('class','scennow'); cur.setAttribute('y1',G.T); cur.setAttribute('y2',G.H-G.B); cur.style.display='none';
+  svg.appendChild(cur);
+  const move=e=>{ const b=svg.getBoundingClientRect(); const x=(e.clientX-b.left)/b.width*G.W;
+    if(x<G.L-4||x>G.W-G.R+4){ tip.hidden=true; cur.style.display='none'; return; }
+    const yr=Math.round(Y[0]+(x-G.L)/(G.W-G.L-G.R)*(SCEN_END-Y[0]));
+    const i=SCEN_YRS.indexOf(yr);
+    cur.setAttribute('x1',G.X(yr)); cur.setAttribute('x2',G.X(yr)); cur.style.display='';
+    let h=`<b>${yr}${yr<=SCEN_BASE?'':' · projected'}</b>`;
+    if(yr<=SCEN_BASE){ const j=G.hy.indexOf(yr); const v=j>=0?G.hv[j]:null;
+      h+=`<div class="r"><i style="background:${css('--ink')}"></i><em>Actual</em><b>${scenFmt(G.k,v)}</b></div>`; }
+    if(i>=0) G.paths.forEach(p=>{ h+=`<div class="r"><i style="background:${p.sc.dash?css('--median'):p.sc.col()}"></i><em>${esc(p.sc.name)}</em><b>${scenFmt(G.k,p.v[i])}</b></div>`; });
+    tip.innerHTML=h; tip.hidden=false;
+    const fr=fig.getBoundingClientRect(), tw=tip.offsetWidth;
+    let px=(G.X(yr)/G.W)*fr.width+14; if(px+tw>fr.width-4) px=(G.X(yr)/G.W)*fr.width-tw-14;
+    tip.style.left=Math.max(2,px)+'px'; tip.style.top=Math.max(2,e.clientY-fr.top-tip.offsetHeight/2)+'px'; };
+  svg._scen=move;
+  svg.addEventListener('pointermove',move);
+  svg.addEventListener('pointerleave',()=>{tip.hidden=true;cur.style.display='none';});
+}
+
 const sim={k:Math.max(0,M.findIndex(m=>m.name==='Business Applications')),v:null};
 const sSm=document.getElementById('sim-metric'), sSr=document.getElementById('sim-r');
 P.forEach(p=>{const g=document.createElement('optgroup');g.label=p;M.forEach((m,k)=>{if(m.pillar===p&&SIM.m[k].nky!=null)g.appendChild(new Option(SHORT[k],k));});sSm.appendChild(g);});
@@ -1631,7 +1875,7 @@ function drawSim(fromSlider){ const k=sim.k, m=SIM.m[k]; if(sim.v==null) sim.v=m
       (s.or!==b.or?` and its overall rank would move from ${ord(b.or)} to <b>${ord(s.or)}</b> of ${N1}.`:`, and its overall rank would hold at ${ord(b.or)} of ${N1}.`)+(Math.abs(mz[k])>=3?' This metric has hit the scoring cap, so pushing it further adds nothing.':''); }
   document.getElementById('sim-note').textContent=`Uses the ${m.yr} values the index scores, with every other metro held at its actual value. Each metric’s contribution is capped so no single metric dominates.`;
 }
-function renderP2(){ syncHash(); drawSim();
+function renderP2(){ syncHash(); drawSim(); renderScen();
   const code=p2.region, yr=p2.year, sc=getScores(code,yr); const name=RNAME(code);
   const yrLabel=yr==='latest'?String(SYR):yr;
   const hero=document.getElementById('p2-hero');
@@ -1981,7 +2225,7 @@ function emblemSVG(){
 function setHL(id,html){const el=document.getElementById(id); if(el) el.innerHTML=html;}
 function drawOvFp(){ const el=document.getElementById('ov-fpsvg'); if(el) el.innerHTML=fingerprint(NKY,'latest',{size:440}); }
 function drawEmblem(){ const fig=document.getElementById('ov-emblem'); if(fig) fig.innerHTML=emblemSVG(); }
-function renderP0(){
+function renderP0(){ renderScenMini();
   const sc=getScores(NKY,'latest'); const bt=beatCount(NKY,sc); const bw=bestWorst(sc);
   { const h=heroParts(sc); const big=h.b?`${h.a}<i> ${h.conn} </i>${h.b}`:h.a;
     setHL('hl-overview', `<span class="bs-k">${h.kick}</span><span class="bs-n">${big}</span><span class="bs-t"><span class="bl">${esc(h.line)}</span><span class="bs-but">${(()=>{const w=h.tail.split(' '); let best=1,bd=1e9; for(let i=1;i<w.length;i++){const d=Math.abs(w.slice(0,i).join(' ').length-w.slice(i).join(' ').length); if(d<bd){bd=d;best=i;}} return `<span class="bl">${esc(w.slice(0,best).join(' '))}</span> <span class="bl">${esc(w.slice(best).join(' '))}</span>`;})()}</span></span>`);  }
@@ -2816,7 +3060,7 @@ function syncBenchUI(){ document.querySelectorAll('[data-bt]').forEach(e=>{e.tex
   const nt=document.getElementById('bseg-note'); if(nt){ nt.hidden=false;
     nt.innerHTML=BK==='mid'?'<b>Middle America</b>Illinois, Indiana, Iowa, Kansas, Kentucky, Michigan, Minnesota, Missouri, Nebraska, North Dakota, Ohio, Pennsylvania, South Dakota, Tennessee, West Virginia, and Wisconsin.':BK==='us'?'<b>United States</b>Every metro of 250,000+ residents in the country, 196 in all. Select Middle America to re-score Northern Kentucky against a more focused region.':''; }
   document.documentElement.dataset.bench=BK; }
-function setBench(k){ if(k===BK||!BENCH[k]) return; applyBenchData(k); TWINS=calcTwins(); sim.v=null;
+function setBench(k){ if(k===BK||!BENCH[k]) return; applyBenchData(k); TWINS=calcTwins(); sim.v=null; scenReset(); scen.anim=true;
   if(!inBench(p2.region)) p2.region=NKY; fillRegionSelect(s2r); s2r.value=p2.region;
   p3.regions=p3.regions.filter(inBench); if(!p3.regions.length) p3.regions=[NKY,CIN];
   if(!inBench(p5.focus)) p5.focus=NKY; setFrame();
