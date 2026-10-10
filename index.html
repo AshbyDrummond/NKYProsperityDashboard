@@ -701,9 +701,6 @@ nav.tabs .navrow{display:flex;align-items:stretch;gap:8px;overflow:visible}
 .benchg[hidden]{display:none!important}
 .navtools{display:flex;align-items:center;gap:16px;flex:none;margin-left:auto}
 .benchg{margin-left:0}
-.copylink{font-size:12.5px;color:var(--ink-2);white-space:nowrap}
-.copylink.done{color:var(--good);text-decoration:none}
-body.no-share .copylink{display:none}
 @media (max-width:760px){
   nav.tabs .navrow{flex-wrap:wrap;gap:0}
   .tabscroll{flex:1 1 100%}
@@ -889,7 +886,7 @@ body.no-share .copylink{display:none}
   <button role="tab" id="tab-local" aria-selected="false" data-page="local">Local Data</button>
   </div>
   <div class="navtools"><div class="benchg"><label for="bench-g">Benchmark</label><select id="bench-g"><option value="us">United States</option><option value="mid">Middle America</option></select></div>
-    <button type="button" class="linkbtn copylink" id="copy-link" title="Copy a link to this view, including the benchmark and selections">Copy link</button></div>
+</div>
 </div></nav>
 
 <main class="wrap">
@@ -1470,12 +1467,6 @@ function applyHash(){ const raw=(location.hash||'').replace(/^#/,''); const [p,q
     if(mk!=null&&LBYID[mk]!=null&&lAvail(LBYID[mk])) lp.m=LBYID[mk]; if(f&&lUnits()[f]) lp.focus=f; }
   return pages.includes(p)?p:'overview'; }
 window.addEventListener('hashchange',()=>{ if(location.hash===LAST_HASH) return; const p=applyHash(); const was=rendered[p]; show(p); if(was) ({metrics:renderP1,index:renderP2,compare:renderP3,map:renderP5,local:renderL})[p]?.(); });
-(()=>{ const b=document.getElementById('copy-link'); if(!b) return;
-  let framed=false; try{ framed=window.top!==window.self; }catch(e){ framed=true; }
-  if(window.claude||framed||!/^https?:/.test(location.href)) document.body.classList.add('no-share');
-  b.addEventListener('click',async()=>{ syncHash(); const url=location.href; let ok=false;
-    try{ await navigator.clipboard.writeText(url); ok=true; }catch(e){ try{ const t=document.createElement('textarea'); t.value=url; t.style.cssText='position:fixed;left:-9999px'; document.body.appendChild(t); t.select(); ok=document.execCommand('copy'); t.remove(); }catch(_){ ok=false; } }
-    b.textContent=ok?'Link copied':'Copy failed'; b.classList.toggle('done',ok); setTimeout(()=>{b.textContent='Copy link';b.classList.remove('done');},1800); }); })();
 // tab rail fades
 (()=>{ const r=document.getElementById('tabscroll'); if(!r) return; const upd=()=>{ r.dataset.fl=r.scrollLeft>4?'1':'0'; r.dataset.fr=r.scrollWidth-r.clientWidth-r.scrollLeft>4?'1':'0'; };
   r.addEventListener('scroll',upd,{passive:true}); window.addEventListener('resize',upd); requestAnimationFrame(upd); setTimeout(upd,400); })();
