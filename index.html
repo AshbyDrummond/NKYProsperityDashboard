@@ -2722,7 +2722,7 @@ function lDrawSel(svg,id){ const g=svg.querySelector('#l-selo'); if(!g) return;
   const src=id?svg.querySelector(`path.t[data-id="${id}"]`):null; const d=src?src.getAttribute('d'):'';
   g.innerHTML=d?`<path class="selo-halo" d="${d}"/><path class="selo-line" d="${d}"/>`:''; }
 function drawLDist(allv,colorOf,mi,nk){ const el=document.getElementById('l-dist'); if(!el) return; if(allv.length<8){ el.innerHTML=''; el.hidden=true; return; } el.hidden=false;
-  const W=el.clientWidth||900, H=112, L=10, R=10, pw=W-L-R;
+  const wide=lWide(), TOP=wide?26:0, W=el.clientWidth||900, H=112+TOP, L=10, R=10, pw=W-L-R;
   const vs=allv.map(x=>x.v); const lo=Math.min(...vs,nk??Infinity), hi=Math.max(...vs,nk??-Infinity); const X=v=>L+(v-lo)/((hi-lo)||1)*pw;
   const r=3.8, cols=Math.max(1,Math.floor(pw/(r*2+1))); const stack=new Array(cols).fill(0);
   const pts=allv.slice().sort((a,b)=>a.v-b.v).map(d=>{ const x=X(d.v); const c=Math.min(cols-1,Math.floor((x-L)/(pw/cols))); return Object.assign({x,row:stack[c]++},d); });
@@ -2731,12 +2731,24 @@ function drawLDist(allv,colorOf,mi,nk){ const el=document.getElementById('l-dist
   h+=`<line x1="${L}" x2="${W-R}" y1="${base+6}" y2="${base+6}" stroke="${css('--axis')}" stroke-width="1"/>`;
   if(nk!=null){ const x=X(nk); const anc=x>W*0.88?'end':x<W*0.12?'start':'middle';
     h+=`<line x1="${x}" x2="${x}" y1="14" y2="${base+6}" stroke="${css('--ink')}" stroke-width="1.2" stroke-dasharray="3 2"/><text x="${x}" y="10" text-anchor="${anc}" font-size="10.5" font-weight="600" fill="${css('--ink')}" font-family="${css('--f-body')}" paint-order="stroke" stroke="${css('--bg')}" stroke-width="3" stroke-linejoin="round">${esc(lRegionName())} ${lfmt(mi,nk,true)}</text>`; }
-  // the selected dot is appended after all the others, so its ring is never under a neighbor
-  let meH='';
-  pts.forEach(d=>{ const y=Math.max(18+r,base-d.row*(r*2+1)-r); const me=d.id===lp.focus;
-    const c=`<circle cx="${d.x.toFixed(1)}" cy="${y.toFixed(1)}" r="${me?r+1.6:r}" fill="${colorOf(d.v)}" stroke="${me?css('--ink'):css('--surface')}" stroke-width="${me?2.2:.7}" data-id="${d.id}"><title>${esc(lName(d.id))}: ${lfmt(mi,d.v)}</title></circle>`;
-    if(me) meH=`<circle cx="${d.x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r+3.6}" fill="none" stroke="${css('--surface')}" stroke-width="2.4" pointer-events="none"/>`+c; else h+=c; });
-  h+=meH;
+  // the selected dot is appended after all the others, so its ring is never under a neighbor; in the
+  // wide scopes Boone, Kenton and Campbell are ringed in orange and tagged, so the home counties can
+  // always be found in the crowd
+  let meH='', nkyH='', tags=[]; const NKYC=new Set(COUNTIES);
+  pts.forEach(d=>{ const y=Math.max(18+TOP+r,base-d.row*(r*2+1)-r); const me=d.id===lp.focus, home=wide&&NKYC.has(d.id);
+    const c=`<circle cx="${d.x.toFixed(1)}" cy="${y.toFixed(1)}" r="${me?r+1.6:home?r+0.6:r}" fill="${colorOf(d.v)}" stroke="${me?css('--ink'):home?css('--s1'):css('--surface')}" stroke-width="${me?2.2:home?2:.7}" data-id="${d.id}"><title>${esc(lName(d.id))}: ${lfmt(mi,d.v)}</title></circle>`;
+    if(home) tags.push({x:d.x,y,id:d.id});
+    if(me) meH=(home?`<circle cx="${d.x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r+5.6}" fill="none" stroke="${css('--s1')}" stroke-width="2" pointer-events="none"/>`:'')+`<circle cx="${d.x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r+3.6}" fill="none" stroke="${css('--surface')}" stroke-width="2.4" pointer-events="none"/>`+c;
+    else if(home) nkyH+=c; else h+=c; });
+  h+=nkyH+meH;
+  if(tags.length){ // county tags along the top, pushed to a second row where they would collide with each other or the region label
+    const placed=[]; if(nk!=null){ const x=X(nk), w=(lRegionName().length+1+lfmt(mi,nk,true).length)*6.6; const anc=x>W*0.88?'end':x<W*0.12?'start':'middle'; const x0=anc==='start'?x:anc==='end'?x-w:x-w/2; placed.push({x0,x1:x0+w,row:0}); }
+    tags.sort((a,b)=>a.x-b.x).forEach(t=>{ const name=LCO[t.id]||lName(t.id).replace(' County','').replace(/,.*$/,''); const w=name.length*6.4+6;
+      const anc=t.x<L+w/2?'start':t.x>W-R-w/2?'end':'middle'; const x0=anc==='start'?t.x:anc==='end'?t.x-w:t.x-w/2, x1=x0+w;
+      let row=0; while(placed.some(b=>b.row===row&&x0<b.x1+4&&x1>b.x0-4)) row++;
+      placed.push({x0,x1,row}); const ty=10+row*12;
+      h+=`<line x1="${t.x.toFixed(1)}" x2="${t.x.toFixed(1)}" y1="${ty+3}" y2="${(t.y-r-2).toFixed(1)}" stroke="${css('--s1')}" stroke-width="1" stroke-dasharray="2 2" pointer-events="none"/>`
+        +`<text x="${t.x.toFixed(1)}" y="${ty}" text-anchor="${anc}" font-size="10.5" font-weight="700" fill="${css('--s1')}" font-family="${css('--f-body')}" paint-order="stroke" stroke="${css('--bg')}" stroke-width="3" stroke-linejoin="round" pointer-events="none">${esc(name)}</text>`; }); }
   const me=pts.find(d=>d.id===lp.focus);
   if(me){ const anchor=me.x>W*0.8?'end':me.x<W*0.2?'start':'middle'; h+=`<text x="${me.x}" y="${base+20}" text-anchor="${anchor}" font-size="10.5" font-weight="700" fill="${css('--s1')}" font-family="${css('--f-body')}" paint-order="stroke" stroke="${css('--bg')}" stroke-width="3" stroke-linejoin="round">${esc(lName(lp.focus))} ${lfmt(mi,me.v,true)}</text>`; }
   const nearL=me&&me.x<L+86, nearR=me&&me.x>W-R-86;
