@@ -321,11 +321,23 @@ tr.grp td{font-family:var(--f-serif);text-transform:none;letter-spacing:0;font-s
 .pcard{background:none;border:0;border-top:2px solid var(--pc);border-radius:0;padding:14px 0 0}
 .pcard .ph h3{font-family:var(--f-serif);text-transform:none;letter-spacing:0;font-weight:600;font-size:22px}
 .pcard .pq{font-family:var(--f-serif);font-style:italic;font-weight:500;font-size:16px}
+/* question and one-word answer; the evidence floats below on hover, or stays open on click */
+.pqa{position:relative;padding-bottom:8px;align-self:start}
+.pans{display:flex;align-items:baseline;justify-content:space-between;gap:14px;width:100%;text-align:left;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:inherit;border-radius:4px}
+.pans .pq{padding:0;flex:1 1 auto}
+.pans .pv{font-family:var(--f-serif);font-style:normal;font-weight:600;font-size:21px;line-height:1;letter-spacing:0;color:var(--pc);flex:none;padding:0 0 1px;border-bottom:2px solid transparent}
+.pans:hover .pv,.pqa.open .pv{border-bottom-color:var(--pc)}
+.pans:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.pdet{display:none;position:absolute;left:-8px;right:-8px;top:100%;z-index:30;margin-top:2px;padding:12px 14px;background:var(--surface);border:2px solid var(--pc);border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.16);font-size:13px;line-height:1.5;color:var(--ink-2)}
+.pdet p{margin:0}
+.pqa:hover .pdet,.pqa.open .pdet,.pans:focus-visible+.pdet{display:block}
+@media (hover:none){.pqa:hover:not(.open) .pdet{display:none}}
+@media print{.pdet{display:block!important;position:static;box-shadow:none;margin:6px 0 0;padding:8px 0 0;border:0;border-top:1px solid var(--line)}}
 /* balanced domain cards: rows line up across columns via subgrid */
 .pgrid{column-gap:30px;row-gap:0}
 .pcard{display:grid;grid-template-rows:subgrid;grid-row:span 8;row-gap:0;margin-bottom:34px;align-content:start}
 .pcard .ph{padding-bottom:10px}
-.pcard .pq{padding-bottom:8px;align-self:start}
+.pcard>.pq{padding-bottom:8px;align-self:start}
 .pcard .pd{padding-bottom:14px;align-self:start}
 .pcard ul{display:grid;grid-template-rows:subgrid;grid-row:span 5;margin:0}
 .pcard li{display:flex}
@@ -912,7 +924,7 @@ nav.tabs .navrow{display:flex;align-items:stretch;gap:8px;overflow:visible}
   <div class="cable-div" aria-hidden="true"></div>
   <div class="ov-sec">
     <div class="lede"><div><h2>Six domains, 30 metrics</h2>
-      <p>Each domain has five metrics. Select one for its data and sources.</p></div></div>
+      <p>Each question gets a one-word answer: <b>Yes</b> when all but one of its five measures are ahead of the typical metro and most are improving, <b>No</b> when all but one are behind, <b>Mostly</b> in between. Hover over or select a question for the evidence, or a metric for its data and sources.</p></div></div>
     <div class="pgrid" id="ov-pillars"></div>
   </div>
   <div class="bseg-wrap"><div class="bseg-main"><span class="bseg-k" id="bseg-k">Compare Northern Kentucky with · select a map</span><div class="bseg" id="bench-o" role="group" aria-labelledby="bseg-k">
@@ -1126,6 +1138,7 @@ nav.tabs .navrow{display:flex;align-items:stretch;gap:8px;overflow:visible}
     <li>Domain scores average their metric z-scores and are re-standardized; the overall score averages all metric z-scores and needs at least 5 of 6 domains.</li>
     <li>Metric scores place each metric’s z-score on a bell curve and scale it to 0 to 10, so a small difference in value moves the score only a little, even where many metros are bunched together. Domain and overall scores are the share of benchmark metros a region outperforms, times 10. Northern Kentucky is scored against the metros but is not part of the benchmark, since its counties sit inside the Cincinnati metro.</li>
     <li>Choose the benchmark on the Overview, or from the menu beside the page tabs on the Prosperity Index, Map, and Compare Regions pages. <b>United States</b> compares Northern Kentucky with all 196 metros of 250,000+ residents. <b>Middle America</b> uses the Census Bureau's Midwest (Illinois, Indiana, Iowa, Kansas, Michigan, Minnesota, Missouri, Nebraska, North Dakota, Ohio, South Dakota, and Wisconsin) plus Kentucky, Pennsylvania, Tennessee, and West Virginia: 55 metros. A metro counts toward a state when its principal city is there. In both indexes every score, rank, and median is recalculated within the group, so the same value can score differently in each.</li>
+    <li>The one-word answers on the Overview do not use scores. For each of a domain's five measures the dashboard asks two things: is Northern Kentucky ahead of the median benchmark metro in the latest year both report, and has its own figure moved the better way over the last five years. <b>Yes</b> means all but one measure is ahead and at least three are improving; <b>No</b> means all but one is behind; <b>Mostly</b> is everything in between. The evidence under each answer names the measures that drive it.</li>
     <li>Index scores use 2024, the latest year with data for every metric. Metrics that already have 2025 values show them on the Regional Metrics page as raw data, but they are not scored until every metric reaches 2025. Each year from 2015 to 2024 re-scores every region on that year's data. Ranks count all regions, including Northern Kentucky, so a rank of 43rd of 197 means 42 regions score higher. Regions are built from member counties (2023 OMB delineations).</li>
   </ul></details>
   <div class="note">Source: BE NKY Growth Partnership. Data from the Census Bureau, BEA, BLS, USPTO PatentsView, NCES IPEDS, and County Health Rankings & Roadmaps. Data through 2025; index scored on 2024. Local Data adds county and small-area measures from the 2021 through 2024 ACS five-year vintages, on 2024 Census cartographic boundaries. Dashboard updated October 2026.</div>
@@ -1471,6 +1484,8 @@ window.addEventListener('hashchange',()=>{ if(location.hash===LAST_HASH) return;
 (()=>{ const r=document.getElementById('tabscroll'); if(!r) return; const upd=()=>{ r.dataset.fl=r.scrollLeft>4?'1':'0'; r.dataset.fr=r.scrollWidth-r.clientWidth-r.scrollLeft>4?'1':'0'; };
   r.addEventListener('scroll',upd,{passive:true}); window.addEventListener('resize',upd); requestAnimationFrame(upd); setTimeout(upd,400); })();
 document.querySelectorAll('nav.tabs button[role=tab]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.page)));
+document.addEventListener('click',e=>{ if(e.target.closest&&e.target.closest('.pqa')) return; document.querySelectorAll('.pqa.open').forEach(x=>{ x.classList.remove('open'); x.querySelector('.pans').setAttribute('aria-expanded','false'); }); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.pqa.open').forEach(x=>{ x.classList.remove('open'); x.querySelector('.pans').setAttribute('aria-expanded','false'); }); });
 document.querySelector('nav.tabs [role=tablist]').addEventListener('keydown',e=>{ const tabs=[...document.querySelectorAll('nav.tabs [role=tab]')]; const i=tabs.indexOf(document.activeElement); if(i<0) return;
   const j=e.key==='ArrowRight'?(i+1)%tabs.length:e.key==='ArrowLeft'?(i-1+tabs.length)%tabs.length:e.key==='Home'?0:e.key==='End'?tabs.length-1:-1; if(j<0) return; e.preventDefault(); tabs[j].focus(); show(tabs[j].dataset.page); });
 
@@ -2161,6 +2176,32 @@ function emblemSVG(){
 function setHL(id,html){const el=document.getElementById(id); if(el) el.innerHTML=html;}
 function drawOvFp(){ const el=document.getElementById('ov-fpsvg'); if(el) el.innerHTML=fingerprint(NKY,'latest',{size:440}); }
 function drawEmblem(){ const fig=document.getElementById('ov-emblem'); if(fig) fig.innerHTML=emblemSVG(); }
+// ---- plain answers to the six domain questions, written from two facts the page already holds for
+// every metric: whether Northern Kentucky is ahead of the median metro in the latest year both report,
+// and whether its own figure has moved the better way over the last five years. No scores involved.
+function domFacts(pi){ const p=P[pi], out=[];
+  M.forEach((m,k)=>{ if(m.pillar!==p) return; const v=D.values[NKY][k], md=D.median[k];
+    let l=-1; for(let j=Y.length-1;j>=0;j--){ if(v[j]!=null&&md[j]!=null){ l=j; break; } } if(l<0) return;
+    let f=Math.max(0,l-5); while(f<l&&v[f]==null) f++;
+    const ahead=(v[l]-md[l])*m.dir>0, improving=(v[l]-v[f])*m.dir>0;
+    const rel=Math.abs(md[l])>1e-9?(v[l]-md[l])*m.dir/Math.abs(md[l]):(v[l]-md[l])*m.dir;
+    // standing among all benchmark metros, in standard deviations, ranks the standouts and the exceptions
+    const z=(SIM.m[k]&&SIM.m[k].nkyz!=null)?SIM.m[k].nkyz:rel;
+    out.push({k,v:v[l],md:md[l],y:Y[l],f:Y[f],ahead,improving,rel,z}); });
+  return out; }
+// Yes: all but one measure ahead of the typical metro and most improving. No: all but one behind. Mostly: in between.
+function domVerdict(F){ const n=F.length, a=F.filter(x=>x.ahead).length, i=F.filter(x=>x.improving).length;
+  if(n<3) return null; if(a>=n-1&&i>=Math.ceil(n*0.6)) return 'yes'; if(a<=1) return 'no'; return 'mostly'; }
+function domAnswer(pi){ const F=domFacts(pi), vd=domVerdict(F); if(!vd) return null;
+  const n=F.length, a=F.filter(x=>x.ahead).length, i=F.filter(x=>x.improving).length;
+  const num=['none','one','two','three','four','five','six'], cap=t=>t.charAt(0).toUpperCase()+t.slice(1), metro=`the typical ${B().metro}`;
+  const lead=a===n?`All ${num[n]} measures are ahead of ${metro}`:a===0?`None of the ${num[n]} measures is ahead of ${metro}`:`${cap(num[a])} of the ${num[n]} measures ${a===1?'is':'are'} ahead of ${metro}`;
+  const parts=[`${lead}, and ${i===n?'all':i===0?'none':num[i]} ${i===1?'has':'have'} improved over the last five years.`];
+  const strong=F.filter(x=>x.ahead&&x.improving).sort((p,q)=>q.z-p.z).slice(0,2);
+  const weak=F.filter(x=>!x.ahead||!x.improving).sort((p,q)=>p.z-q.z).slice(0,2);
+  if(strong.length) parts.push(strong.map(x=>`${SHORT[x.k]} is ${fmt(x.k,x.v)} against ${fmt(x.k,x.md)}`).join(', and ')+'.');
+  if(weak.length) parts.push((weak.length===1?'The exception is ':'The exceptions are ')+weak.map(x=>`${SHORT[x.k]} (${fmt(x.k,x.v)}, ${x.ahead?`ahead but slipping since ${x.f}`:x.improving?`improving but still behind ${fmt(x.k,x.md)}`:`behind ${fmt(x.k,x.md)} and slipping`})`).join(' and ')+'.');
+  return {vd, word:vd==='yes'?'Yes':vd==='no'?'No':'Mostly', text:parts.join(' ')}; }
 function renderP0(){
   const sc=getScores(NKY,'latest'); const bt=beatCount(NKY,sc); const bw=bestWorst(sc);
   { const h=heroParts(sc); const big=h.b?`${h.a}<i> ${h.conn} </i>${h.b}`:h.a;
@@ -2176,9 +2217,14 @@ function renderP0(){
     <div class="gs-r">${swarm(NKY,'latest',bt.beat,bt.of)}</div>`; }
   const g=document.getElementById('ov-pillars');
   g.innerHTML=P.map((p,pi)=>`<article class="pcard" style="--pc:var(--p${pi})"><div class="ph">${dicon(pi,'lg')}<h3 data-n="${String(pi+1).padStart(2,'0')}">${esc(p)}</h3></div>
-    <p class="pq">${esc(PINFO[pi].q)}</p>
+    ${(()=>{ const A=domAnswer(pi); if(!A) return `<p class="pq">${esc(PINFO[pi].q)}</p>`;
+      return `<div class="pqa"><button type="button" class="pans" aria-expanded="false" aria-controls="pdet-${pi}" title="Show the evidence"><span class="pq">${esc(PINFO[pi].q)}</span><span class="pv pv-${A.vd}">${A.word}</span></button><div class="pdet" id="pdet-${pi}" role="region" aria-label="Evidence for ${esc(p)}"><p>${esc(A.text)}</p></div></div>`; })()}
     <ul>${M.map((m,k)=>m.pillar!==p?'':`<li><button type="button" data-k="${k}"><b>${esc(SHORT[k])}</b><span>${esc(PURPOSE[k])}</span><i>›</i></button></li>`).join('')}</ul></article>`).join('');
   g.querySelectorAll('button[data-k]').forEach(b=>b.addEventListener('click',()=>openDetail(+b.dataset.k)));
+  // hover shows the evidence; a click pins it open until the next click, Escape, or a click elsewhere
+  g.querySelectorAll('.pans').forEach(b=>b.addEventListener('click',()=>{ const w=b.parentNode, on=!w.classList.contains('open');
+    g.querySelectorAll('.pqa.open').forEach(x=>{ x.classList.remove('open'); x.querySelector('.pans').setAttribute('aria-expanded','false'); });
+    w.classList.toggle('open',on); b.setAttribute('aria-expanded',String(on)); }));
   document.querySelectorAll('#page-overview [data-go]').forEach(b=>b.addEventListener('click',()=>{show(b.dataset.go);window.scrollTo({top:0,behavior:'smooth'});}));
 }
 
