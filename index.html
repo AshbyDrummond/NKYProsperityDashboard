@@ -206,6 +206,40 @@ td .dot{width:10px;height:10px;border-radius:2px;display:inline-block}
 .use b{font-size:15px}.use p{margin:0;font-size:13px;color:var(--ink-2);line-height:1.5}
 .use .go{margin-top:auto;padding-top:4px;color:var(--accent);font-weight:700;font-size:13px}
 .mapwrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+/* Local Data: a rail of every measure on the left, the map and its detail panel on the right */
+.lwrap{display:grid;grid-template-columns:262px minmax(0,1fr);gap:22px;align-items:start}
+.lrail{position:sticky;top:62px;max-height:calc(100vh - 76px);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:10px;min-width:0}
+.lrail-top{display:flex;align-items:center;gap:6px;padding:10px 10px 8px;border-bottom:1px solid var(--line)}
+.lrail-top input{flex:1;min-width:0;font:500 13px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px}
+.lrail-top input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.lrail-x{display:none;background:none;border:0;font-size:20px;line-height:1;color:var(--muted);cursor:pointer;padding:2px 6px}
+.lrail-list{overflow:auto;overscroll-behavior:contain;padding:4px 0 8px}
+.lgrp-h{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;background:var(--surface);border:0;border-bottom:1px solid var(--line);padding:9px 12px 6px;font:700 10.5px var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);cursor:pointer}
+.lgrp-h .cnt{font-weight:500;letter-spacing:0;color:var(--muted);text-transform:none;font-size:11px}
+.lgrp-h::after{content:'\25BE';color:var(--muted);font-size:11px;margin-left:auto}
+.lgrp-h[aria-expanded="false"]::after{transform:rotate(-90deg);display:inline-block}
+.lgrp-h[aria-expanded="false"]+.lgrp-b{display:none}
+.lrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:baseline;width:100%;text-align:left;background:none;border:0;border-left:3px solid transparent;padding:6px 10px 6px 11px;cursor:pointer;font:500 12.5px/1.3 var(--f-body);color:var(--ink)}
+.lrow:hover{background:var(--surface-2)}
+.lrow[aria-selected="true"]{background:color-mix(in srgb,var(--local) 12%,var(--surface));border-left-color:var(--local);font-weight:700}
+.lrow .val{font-variant-numeric:tabular-nums;color:var(--ink-2);font-size:12px;white-space:nowrap}
+.lrow.off{color:var(--muted)}.lrow.off .val{font-size:10.5px;color:var(--muted);font-style:italic}
+.lrow:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.lrail-empty{padding:14px 12px;font-size:12.5px;color:var(--muted)}
+.l-selctl{display:none}.l-railctl{display:none}
+.lrail-veil{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:39}
+@media (max-width:1200px){
+  .lwrap{grid-template-columns:1fr}
+  .l-railctl{display:flex}
+  .lrail{position:fixed;top:0;left:0;bottom:0;width:min(320px,86vw);max-height:none;border-radius:0;z-index:40;transform:translateX(-105%);transition:transform .22s ease;box-shadow:0 0 40px rgba(0,0,0,.25)}
+  .lrail.open{transform:none}
+  .lrail-x{display:block}
+}
+@media (max-width:760px){
+  .lrail,.lrail-veil,.l-railctl{display:none!important}
+  .l-selctl{display:flex}
+}
+@media print{.lrail,.lrail-veil,.l-railctl{display:none!important}.lwrap{display:block}}
 @media (max-width:1000px){.mapwrap{grid-template-columns:1fr}}
 .mapside{display:flex;flex-direction:column;gap:14px;min-width:0}
 .mappanel{display:flex;flex-direction:column;gap:10px}
@@ -1091,12 +1125,20 @@ nav.tabs .navrow{display:flex;align-items:stretch;gap:8px;overflow:visible}
     <h2 class="headline" id="hl-local"></h2>
     </div>
     <div class="controls">
-      <div class="ctl"><label class="lab" for="l-sel">Metric</label><select id="l-sel"></select></div>
+      <div class="ctl l-selctl"><label class="lab" for="l-sel">Metric</label><select id="l-sel"></select></div>
+      <div class="ctl l-railctl"><span class="lab">Measures</span><button type="button" class="btn" id="l-rail-btn" aria-expanded="false" aria-controls="l-rail">Browse all measures</button></div>
       <div class="ctl"><span class="lab">Compare</span><div class="chips" id="l-scope"><button class="chip" type="button" data-s="nky" aria-pressed="true">Northern Kentucky</button><button class="chip" type="button" data-s="msa" aria-pressed="false">Cincinnati MSA</button><button class="chip" type="button" data-s="ky" aria-pressed="false">All of Kentucky</button></div></div>
       <div class="ctl" id="l-geo-ctl"><span class="lab">Geography</span><div class="chips" id="l-geo"><button class="chip" type="button" data-g="counties" aria-pressed="true">Counties</button><button class="chip" type="button" data-g="tracts" aria-pressed="false">Census tracts</button><button class="chip" type="button" data-g="places" aria-pressed="false">Cities and towns</button></div></div>
       <div class="ctl"><label class="lab" for="l-year">Year</label><select id="l-year"></select></div>
     </div>
   </div>
+  <div class="lwrap">
+    <aside class="lrail" id="l-rail" aria-label="Measures">
+      <div class="lrail-top"><input type="search" id="l-find" placeholder="Find a measure" aria-label="Find a measure" autocomplete="off"><button type="button" class="lrail-x" id="l-rail-close" aria-label="Close the measures list">×</button></div>
+      <div class="lrail-list" id="l-list"></div>
+    </aside>
+    <div class="lrail-veil" id="l-rail-veil" hidden></div>
+    <div class="lmain">
   <div class="mapwrap">
     <div class="panel mappanel">
       <div class="maplegend lleg" id="l-legend"></div>
@@ -1114,6 +1156,8 @@ nav.tabs .navrow{display:flex;align-items:stretch;gap:8px;overflow:visible}
           <h5 class="rk-h" id="l-both">Lowest</h5><ol class="rlist" id="l-bot"></ol>
         </div>
       </div>
+    </div>
+  </div>
     </div>
   </div>
   <details class="method panel"><summary>About this data</summary><ul>
@@ -2469,6 +2513,36 @@ function fillLSel(){ lsel.innerHTML='';
     if(og.children.length) lsel.appendChild(og); });
   lsel.value=String(lp.m); }
 lsel.addEventListener('change',()=>{lp.m=+lsel.value;renderL();});
+// The rail lists every measure by group, with the regional figure for the year on screen. Measures the
+// current view cannot show stay in the list, muted, and selecting one moves to the county view that can.
+const lRailState={collapsed:new Set(),q:''};
+function lWhyNot(i){ const m=LMET[i]; if(lWide()) return 'county view'; if(lp.geo!=='counties'&&!m.small) return 'counties only'; return ''; }
+function lPick(i){ if(!lAvail(i)){ lp.geo='counties'; lp.focus=null; lz.k=1; lz.x=0; lz.y=0; } lp.m=i; renderL(); lRailClose(); }
+function fillLRail(){ const list=document.getElementById('l-list'); if(!list) return;
+  const q=lRailState.q.trim().toLowerCase();
+  let html='', shown=0;
+  LGROUPS.forEach(g=>{ const rows=[];
+    LMET.forEach((m,i)=>{ if(m.theme!==g.key) return; if(LSKIP.has(m.name)||LSKIP_KEY.has(m.id)) return;
+      if(q&&!(m.short+' '+m.name).toLowerCase().includes(q)) return;
+      const ok=lAvail(i); let val='';
+      if(ok){ const v=lRegion(i,null); val=v==null?'':lfmt(i,v,true); } else val=lWhyNot(i);
+      rows.push(`<button type="button" class="lrow${ok?'':' off'}" role="option" data-i="${i}" aria-selected="${i===lp.m}" title="${esc(m.name)}${ok?'':' · available in the '+(lWide()?'Northern Kentucky county view':'county view')}"><span class="nm">${esc(m.short)}</span><span class="val">${esc(val)}</span></button>`); });
+    if(!rows.length) return; shown+=rows.length;
+    const open=q?true:!lRailState.collapsed.has(g.key);
+    html+=`<div class="lgrp"><button type="button" class="lgrp-h" data-g="${g.key}" aria-expanded="${open}">${esc(g.label)}<span class="cnt">${rows.length}</span></button><div class="lgrp-b" role="listbox">${rows.join('')}</div></div>`; });
+  list.innerHTML=html||`<div class="lrail-empty">No measure matches "${esc(lRailState.q)}".</div>`;
+  list.querySelectorAll('.lrow').forEach(b=>b.addEventListener('click',()=>lPick(+b.dataset.i)));
+  list.querySelectorAll('.lgrp-h').forEach(b=>b.addEventListener('click',()=>{ const k=b.dataset.g; if(lRailState.collapsed.has(k)) lRailState.collapsed.delete(k); else lRailState.collapsed.add(k); b.setAttribute('aria-expanded',String(!lRailState.collapsed.has(k))); }));
+  // keep the current measure in view inside the rail without scrolling the page
+  const cur=list.querySelector('.lrow[aria-selected="true"]'); if(cur){ const lt=list.getBoundingClientRect(), ct=cur.getBoundingClientRect();
+    if(ct.top<lt.top+40||ct.bottom>lt.bottom-8) list.scrollTop+=ct.top-lt.top-lt.height/2; } }
+function lRailClose(){ const r=document.getElementById('l-rail'), v=document.getElementById('l-rail-veil'), b=document.getElementById('l-rail-btn'); if(!r) return; r.classList.remove('open'); if(v) v.hidden=true; if(b) b.setAttribute('aria-expanded','false'); }
+(function initLRail(){ const r=document.getElementById('l-rail'); if(!r) return;
+  document.getElementById('l-find').addEventListener('input',e=>{ lRailState.q=e.target.value; fillLRail(); });
+  document.getElementById('l-rail-btn').addEventListener('click',()=>{ const v=document.getElementById('l-rail-veil'); const on=!r.classList.contains('open'); r.classList.toggle('open',on); v.hidden=!on; document.getElementById('l-rail-btn').setAttribute('aria-expanded',String(on)); if(on) setTimeout(()=>document.getElementById('l-find').focus(),250); });
+  document.getElementById('l-rail-close').addEventListener('click',lRailClose);
+  document.getElementById('l-rail-veil').addEventListener('click',lRailClose);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') lRailClose(); }); })();
 function lSetGeo(g){ if(lp.geo===g) return; lp.geo=g; lp.focus=null; lz.k=1; lz.x=0; lz.y=0;
   if(!lAvail(lp.m)) lp.m=LMET.findIndex((m,i)=>lAvail(i)); renderL(); }
 document.querySelectorAll('#l-geo .chip').forEach(b=>b.addEventListener('click',()=>lSetGeo(b.dataset.g)));
@@ -2599,7 +2673,7 @@ function lPoint(svg,cx,cy){ const G=lGeoDef(), b=svg.getBoundingClientRect(); re
     const b=svg.getBoundingClientRect(); lz.x=start.x-dx/b.width*(G.w/lz.k); lz.y=start.y-dy/b.height*(G.h/lz.k); applyLZoom(); });
   const end=e=>{ pts.delete(e.pointerId); if(pts.size<2) pinch=null; if(pts.size===0){ start=null; svg.classList.remove('dragging'); setTimeout(()=>{lz.dragged=false;},0); } };
   svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end); })();
-function renderL(){ syncHash(); fillLSel(); const mi=lp.m, m=LMET[mi], dir=m.dir, U=lUnits(), G=lGeoDef(), svg=document.getElementById('l-map'), GW=LGEO[lp.geo], wide=lWide();
+function renderL(){ syncHash(); fillLSel(); fillLRail(); const mi=lp.m, m=LMET[mi], dir=m.dir, U=lUnits(), G=lGeoDef(), svg=document.getElementById('l-map'), GW=LGEO[lp.geo], wide=lWide();
   document.querySelectorAll('#l-geo .chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.g===lp.geo)));
   document.querySelectorAll('#l-scope .chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.s===lScope())));
   const gctl=document.getElementById('l-geo-ctl'); if(gctl) gctl.hidden=wide;
