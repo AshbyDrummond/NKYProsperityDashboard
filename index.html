@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Northern Kentucky Prosperity Dashboard: how Boone, Kenton, and Campbell counties compare with peer metros, plus local data by county, tract and city.">
 <title>NKY Prosperity Dashboard</title>
+<script>/* Dark is the dashboard's own default on every device; a viewer's choice is kept on their machine. */
+try{var _t=localStorage.getItem('nkytheme');document.documentElement.setAttribute('data-theme',_t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..500&family=Public+Sans:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
@@ -748,11 +750,20 @@ nav.tabs .navrow{display:flex;align-items:stretch;gap:8px;overflow:visible}
 .tabscroll[data-fl="1"][data-fr="1"]{-webkit-mask-image:linear-gradient(90deg,transparent,#000 36px,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(90deg,transparent,#000 36px,#000 calc(100% - 36px),transparent)}
 .benchg[hidden]{display:none!important}
 .navtools{display:flex;align-items:center;gap:16px;flex:none;margin-left:auto}
+nav.tabs button.themetog{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;flex:none;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink-2);cursor:pointer}
+nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--axis);color:var(--ink)}
+.themetog:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.themetog svg{width:17px;height:17px;flex:none;display:block}
+.themetog .ic-sun{display:none}
+:root[data-theme="dark"] .themetog .ic-sun{display:block}
+:root[data-theme="dark"] .themetog .ic-moon{display:none}
 .benchg{margin-left:0}
 @media (max-width:760px){
   nav.tabs .navrow{flex-wrap:wrap;gap:0}
   .tabscroll{flex:1 1 100%}
-  .navtools{flex:1 1 100%;margin-left:0;justify-content:space-between;border-top:1px solid var(--line);padding:2px 0}
+  /* the benchmark picker, where the page has one, keeps the left; the theme control always sits at the right edge */
+  .navtools{flex:1 1 100%;margin-left:0;justify-content:flex-end;border-top:1px solid var(--line);padding:2px 0}
+  .navtools .benchg{margin-right:auto}
   .benchg{padding:6px 0;gap:10px}
   .benchg select{flex:1 1 auto;max-width:none}
   nav.tabs button{padding:12px 11px 10px;font-size:13.5px}
@@ -936,6 +947,7 @@ nav.tabs .navrow{display:flex;align-items:stretch;gap:8px;overflow:visible}
   <button role="tab" id="tab-local" aria-selected="false" data-page="local">Local Data</button>
   </div>
   <div class="navtools"><div class="benchg"><label for="bench-g">Benchmark</label><select id="bench-g"><option value="us">United States</option><option value="mid">Middle America</option></select></div>
+  <button type="button" class="themetog" id="themetog" aria-pressed="true" aria-label="Switch to light mode" title="Switch to light mode"><svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M4.2 12H2M22 12h-2.2M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/></svg><svg class="ic-moon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.3 14.6A8.6 8.6 0 0 1 9.4 3.7 8.6 8.6 0 1 0 20.3 14.6z"/></svg></button>
 </div>
 </div></nav>
 
@@ -3247,6 +3259,15 @@ syncBenchUI();
 function redrawAll(){ Object.keys(rendered).forEach(p=>({overview:renderP0,metrics:renderP1,index:renderP2,compare:renderP3,map:renderP5,goals:renderG,local:renderL})[p]()); if(document.getElementById('dlg').open&&dlgRedraw) dlgRedraw();}
 try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',redrawAll);}catch(e){}
 new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+// sun and moon: one button, showing the palette it switches to. Every chart and map repaints
+// through the observer above, so the whole dashboard turns over in one click.
+(()=>{ const b=document.getElementById('themetog'), root=document.documentElement; if(!b) return;
+  const isDark=()=>root.getAttribute('data-theme')!=='light';
+  const sync=()=>{ const lbl=isDark()?'Switch to light mode':'Switch to dark mode';
+    b.setAttribute('aria-label',lbl); b.title=lbl; b.setAttribute('aria-pressed',String(isDark())); };
+  b.addEventListener('click',()=>{ const next=isDark()?'light':'dark';
+    root.setAttribute('data-theme',next); try{localStorage.setItem('nkytheme',next);}catch(e){} sync(); });
+  sync(); })();
 // print: light theme, collapsed sections opened, charts refit to the page
 (()=>{ let prev=null, opened=[], anim=null; const root=document.documentElement; const refit=()=>Object.values(charts).forEach(c=>!c.isDisposed()&&c.resize());
   window.addEventListener('beforeprint',()=>{ anim=ANIM; ANIM=false;
