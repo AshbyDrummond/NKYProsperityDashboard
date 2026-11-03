@@ -360,17 +360,6 @@ tr.grp td{font-family:var(--f-serif);text-transform:none;letter-spacing:0;font-s
 .pcard .ph h3{font-family:var(--f-serif);text-transform:none;letter-spacing:0;font-weight:600;font-size:22px}
 .pcard .pq{font-family:var(--f-serif);font-style:italic;font-weight:500;font-size:16px}
 /* question and one-word answer; the evidence floats below on hover, or stays open on click */
-.pqa{position:relative;padding-bottom:8px;align-self:start}
-.pans{display:flex;align-items:baseline;justify-content:space-between;gap:14px;width:100%;text-align:left;background:none;border:0;padding:0;cursor:pointer;font:inherit;color:inherit;border-radius:4px}
-.pans .pq{padding:0;flex:1 1 auto}
-.pans .pv{font-family:var(--f-serif);font-style:normal;font-weight:600;font-size:21px;line-height:1;letter-spacing:0;color:var(--pc);flex:none;padding:0 0 1px;border-bottom:2px solid transparent}
-.pans:hover .pv,.pqa.open .pv{border-bottom-color:var(--pc)}
-.pans:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
-.pdet{display:none;position:absolute;left:-8px;right:-8px;top:100%;z-index:30;margin-top:2px;padding:12px 14px;background:var(--surface);border:2px solid var(--pc);border-radius:8px;box-shadow:0 10px 28px rgba(0,0,0,.16);font-size:13px;line-height:1.5;color:var(--ink-2)}
-.pdet p{margin:0}
-.pqa:hover .pdet,.pqa.open .pdet,.pans:focus-visible+.pdet{display:block}
-@media (hover:none){.pqa:hover:not(.open) .pdet{display:none}}
-@media print{.pdet{display:block!important;position:static;box-shadow:none;margin:6px 0 0;padding:8px 0 0;border:0;border-top:1px solid var(--line)}}
 /* balanced domain cards: rows line up across columns via subgrid */
 .pgrid{column-gap:30px;row-gap:0}
 .pcard{display:grid;grid-template-rows:subgrid;grid-row:span 8;row-gap:0;margin-bottom:34px;align-content:start}
@@ -396,12 +385,17 @@ footer h6{font-family:var(--f-serif);font-size:16px;font-weight:600}
 .ov-hero{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center}
 .ov-intro .headline{font-size:clamp(30px,3.8vw,46px);max-width:22ch}
 .ov-intro p{font-size:15.5px}
+.soon{min-height:46vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:48px 16px 64px}
+.soon .ptitle{margin:0}
+.soon-k{font:600 13px var(--f-body);letter-spacing:.16em;text-transform:uppercase;color:var(--s1);margin:0}
+.soon-s{color:var(--muted);font-size:15px;max-width:52ch;margin:0;line-height:1.5}
 .emblem{margin:0;position:relative}
 .emblem svg{width:100%;height:auto;display:block;overflow:visible}
 .emblem .cty{fill:var(--land);stroke:var(--bg);stroke-width:2}
 .emblem .water{fill:var(--river)}
 .emblem .clab{font-family:var(--f-serif);font-size:12px;font-weight:600;fill:var(--ink);letter-spacing:.06em;text-transform:uppercase}
 .emblem .rlab{font-family:var(--f-serif);font-style:italic;font-size:12px;fill:var(--river)}
+.emblem .citylab{font-family:var(--f-serif);font-size:10.5px;font-weight:600;fill:var(--ink-2);letter-spacing:.08em;text-transform:uppercase;paint-order:stroke;stroke:var(--bg);stroke-width:2.5px;stroke-linejoin:round;pointer-events:none}
 .emblem figcaption{font-size:12px;color:var(--muted);margin-top:6px}
 .g-fp .fp{max-width:500px;margin:0 auto}
 @media (max-width:900px){.ov-hero{grid-template-columns:1fr}.emblem{max-width:460px}}
@@ -941,6 +935,7 @@ nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--ax
   <button role="tab" id="tab-overview" aria-selected="true" data-page="overview">Overview</button>
   <button role="tab" id="tab-metrics" aria-selected="false" data-page="metrics">Regional Metrics</button>
   <button role="tab" id="tab-goals" aria-selected="false" data-page="goals">Goals</button>
+  <button role="tab" id="tab-insights" aria-selected="false" data-page="insights">Actionable Insights</button>
   <button role="tab" id="tab-index" aria-selected="false" data-page="index">Prosperity Index</button>
   <button role="tab" id="tab-map" aria-selected="false" data-page="map">Map</button>
   <button role="tab" id="tab-compare" aria-selected="false" data-page="compare">Compare Regions</button>
@@ -960,7 +955,7 @@ nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--ax
       <h2 class="headline" id="hl-overview"></h2>
       <p class="ov-lead">Northern Kentucky’s economy is usually reported as part of the Cincinnati metro, which hides how Boone, Kenton, and Campbell counties are doing on their own. This index measures the three counties together against metros of 250,000+ residents, across the nation or within the region, giving funders, partners, and policymakers one consistent picture of where the region leads, where it lags, and whether it is moving in the right direction.</p>
     </div>
-    <div class="emwrap"><figure class="emblem" id="ov-emblem" aria-label="Map of Boone, Kenton, and Campbell counties along the Ohio and Licking rivers"></figure>
+    <div class="emwrap"><figure class="emblem" id="ov-emblem" aria-label="Map of Boone, Kenton, and Campbell counties along the Ohio and Licking rivers, with Cincinnati across the Ohio"></figure>
       <button type="button" class="linkbtn emlink" data-go="local"><span>See the data by county, city, and neighborhood</span></button></div>
   </div>
       <div class="ov-parts ov-row">
@@ -974,7 +969,7 @@ nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--ax
   <div class="cable-div" aria-hidden="true"></div>
   <div class="ov-sec">
     <div class="lede"><div><h2>Six domains, 30 metrics</h2>
-      <p>Each question gets a one-word answer: <b>Yes</b> when all but one of its five measures are ahead of the typical metro and most are improving, <b>No</b> when all but one are behind, <b>Mostly</b> in between. Hover over or select a question for the evidence, or a metric for its data and sources.</p></div></div>
+      <p>Each domain asks one question of the region, and five metrics answer it. Select a metric for its data, its history, and its sources.</p></div></div>
     <div class="pgrid" id="ov-pillars"></div>
   </div>
   <div class="bseg-wrap"><div class="bseg-main"><span class="bseg-k" id="bseg-k">Compare Northern Kentucky with · select a map</span><div class="bseg" id="bench-o" role="group" aria-labelledby="bseg-k">
@@ -1103,6 +1098,13 @@ nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--ax
     <li>Dollar goals are in current dollars, so part of the progress toward them will come from inflation.</li>
     <li>The path runs in a straight line from the 2019 value to the goal in 2030. <b>On track</b> means the latest value is at or ahead of the path, allowing a small margin. <b>Met</b> means the goal value is already reached.</ul></details>
 </section>
+<section class="page" id="page-insights" hidden>
+  <div class="soon">
+    <h1 class="ptitle">Actionable Insights</h1>
+    <p class="soon-k">Coming soon</p>
+    <p class="soon-s">What the numbers on this dashboard point to, and how the region can act on them.</p>
+  </div>
+</section>
 <!-- PAGE 5: MAP -->
 <section class="page" id="page-map" hidden>
   <div class="lede">
@@ -1198,7 +1200,6 @@ nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--ax
     <li>Domain scores average their metric z-scores and are re-standardized; the overall score averages all metric z-scores and needs at least 5 of 6 domains.</li>
     <li>Metric scores place each metric’s z-score on a bell curve and scale it to 0 to 10, so a small difference in value moves the score only a little, even where many metros are bunched together. Domain and overall scores are the share of benchmark metros a region outperforms, times 10. Northern Kentucky is scored against the metros but is not part of the benchmark, since its counties sit inside the Cincinnati metro.</li>
     <li>Choose the benchmark on the Overview, or from the menu beside the page tabs on the Prosperity Index, Map, and Compare Regions pages. <b>United States</b> compares Northern Kentucky with all 196 metros of 250,000+ residents. <b>Middle America</b> uses the Census Bureau's Midwest (Illinois, Indiana, Iowa, Kansas, Michigan, Minnesota, Missouri, Nebraska, North Dakota, Ohio, South Dakota, and Wisconsin) plus Kentucky, Pennsylvania, Tennessee, and West Virginia: 55 metros. A metro counts toward a state when its principal city is there. In both indexes every score, rank, and median is recalculated within the group, so the same value can score differently in each.</li>
-    <li>The one-word answers on the Overview do not use scores. For each of a domain's five measures the dashboard asks two things: is Northern Kentucky ahead of the median benchmark metro in the latest year both report, and has its own figure moved the better way over the last five years. <b>Yes</b> means all but one measure is ahead and at least three are improving; <b>No</b> means all but one is behind; <b>Mostly</b> is everything in between. The evidence under each answer names the measures that drive it.</li>
     <li>Index scores use 2024, the latest year with data for every metric. Metrics that already have 2025 values show them on the Regional Metrics page as raw data, but they are not scored until every metric reaches 2025. Each year from 2015 to 2024 re-scores every region on that year's data. Ranks count all regions, including Northern Kentucky, so a rank of 43rd of 197 means 42 regions score higher. Regions are built from member counties (2023 OMB delineations).</li>
   </ul></details>
   <div class="note">Source: BE NKY Growth Partnership. Data from the Census Bureau, BEA, BLS, USPTO PatentsView, NCES IPEDS, and County Health Rankings & Roadmaps. Data through 2025; index scored on 2024. Local Data adds county and small-area measures from the 2021 through 2024 ACS five-year vintages, on 2024 Census cartographic boundaries. Dashboard updated October 2026.</div>
@@ -1484,34 +1485,67 @@ function totalFor(code,n){return n+1;}
 const charts={}; const renderers=[];
 function chart(id){ const el=typeof id==='string'?document.getElementById(id):id; const key=el.id||el.dataset.k;
   if(charts[key]&&!charts[key].isDisposed()){ if(charts[key].getDom()===el) return charts[key]; charts[key].dispose(); } const inst=echarts.init(el,null,{renderer:'svg'});
-  if(ED_IDS.has(key)){ const orig=inst.setOption.bind(inst); inst.setOption=(o,...a)=>orig(editorial(o),...a); }
+  if(ED_IDS.has(key)){ const orig=inst.setOption.bind(inst); inst.setOption=(o,...a)=>orig(editorial(o,inst),...a); }
   charts[key]=inst; return inst;}
 const ED_IDS=new Set(['p2-trend','p3-trend','p3-mv','dlg-chart']);
-function editorial(o){ if(!o||!Array.isArray(o.series)) return o;
+// Series names are written out beside the end of each line rather than in a legend, so the gutter
+// has to be measured from the text itself: a short name wastes less of the plot, a long one is not
+// cut off at the frame. Past about a third of the chart the name wraps instead of widening further.
+const _tc=document.createElement('canvas').getContext('2d');
+function textW(t,size,weight){ _tc.font=`${weight||600} ${size||11.5}px ${css('--f-body')}`; return _tc.measureText(String(t)).width; }
+function editorial(o,inst){ if(!o||!Array.isArray(o.series)) return o;
   const real=o.series.filter(s=>s&&s.type==='line'&&s.name&&!/^(gap|cloud|band)/.test(String(s.id||''))&&Array.isArray(s.data)&&s.data.some(v=>typeof v==='number'||(Array.isArray(v)&&typeof v[1]==='number')));
-  real.forEach(s=>{ const col=s.lineStyle?.color||s.itemStyle?.color; const lab={color:col,fontFamily:css('--f-body'),fontSize:11.5,fontWeight:600};
+  const CW=(inst&&inst.getWidth&&inst.getWidth())||0;
+  const need=Math.ceil(Math.max(0,...real.map(s=>textW(s.name))))+16;
+  const cap=CW?Math.max(132,Math.round(CW*0.33)):236;
+  const gut=Math.min(Math.max(128,need),cap), labW=Math.max(64,gut-14);
+  // Two lines can finish within a label's height of each other. The names are nudged apart by the
+  // few pixels that takes, worked out from the axis itself, rather than handed to the chart
+  // library's own overlap pass, which also sees the value labels and drags a name off its line.
+  const CH=(inst&&inst.getHeight&&inst.getHeight())||0, ya=Array.isArray(o.yAxis)?o.yAxis[0]:o.yAxis, OFF={};
+  if(CH&&o.grid&&ya&&typeof ya.min==='number'&&typeof ya.max==='number'&&real.length>1){
+    const gt=Math.min(o.grid.top??40,28), gb=o.grid.bottom??24, plotH=Math.max(40,CH-gt-gb-22), span=(ya.max-ya.min)||1;
+    const pts=real.map(x=>{ const d=x.data; let i=d.length-1; while(i>=0&&typeof d[i]!=='number') i--;
+      return i<0?null:{n:x.name,y0:gt+(ya.max-d[i])/span*plotH}; }).filter(Boolean).sort((a,b)=>a.y0-b.y0);
+    pts.forEach(x=>x.y=x.y0);
+    for(let i=1;i<pts.length;i++){ const gap=pts[i].y-pts[i-1].y; if(gap<15){ const push=(15-gap)/2; pts[i-1].y-=push; pts[i].y+=push; } }
+    pts.forEach(x=>{ if(Math.abs(x.y-x.y0)>0.5) OFF[x.n]=[0,Math.round(x.y-x.y0)]; });
+  }
+  real.forEach(s=>{ const col=s.lineStyle?.color||s.itemStyle?.color; const lab={color:col,fontFamily:css('--f-body'),fontSize:11.5,fontWeight:600,width:labW,overflow:'break',lineHeight:14,...(OFF[s.name]?{offset:OFF[s.name]}:{})};
     const d=s.data, last=d[d.length-1];
     const nNum=d.filter(v=>typeof v==='number').length; let run=0; for(let j=d.length-1;j>=0&&typeof d[j]==='number';j--) run++;
     if(nNum===d.length&&nNum>=2) s.endLabel=Object.assign({show:true,formatter:p=>p.seriesName,distance:6},lab);
-    else { let i=d.length-1; while(i>=0&&typeof d[i]!=='number') i--; if(i>=0){ const mp=s.markPoint||{data:[]}; s.markPoint=Object.assign({},mp,{data:[...(mp.data||[]),{coord:[i,d[i]],symbol:'none',label:Object.assign({show:true,position:'right',formatter:s.name,distance:6},lab)}]}); } } if(real.length>1) s.labelLayout={moveOverlap:'shiftY'}; });
+    else { let i=d.length-1; while(i>=0&&typeof d[i]!=='number') i--; if(i>=0){ const mp=s.markPoint||{data:[]}; s.markPoint=Object.assign({},mp,{data:[...(mp.data||[]),{coord:[i,d[i]],symbol:'none',label:Object.assign({show:true,position:'right',formatter:s.name,distance:6},lab)}]}); } } });
   if(o.legend) o.legend=Object.assign({},o.legend,{show:false});
-  if(o.grid){ o.grid=Object.assign({},o.grid,{right:Math.max(o.grid.right||0,128),top:Math.min(o.grid.top??40,28)}); }
+  if(o.grid){ o.grid=Object.assign({},o.grid,{right:Math.max(o.grid.right||0,gut),top:Math.min(o.grid.top??40,28)}); }
   const xd=o.xAxis&&o.xAxis.data; const x20=xd&&xd.find(v=>String(v)==='2020');
-  if(x20!=null&&real[0]){ const s=real[0]; const ml=s.markLine||{silent:true,symbol:'none',data:[]};
-    s.markLine=Object.assign({},ml,{silent:true,symbol:'none',data:[...(ml.data||[]),{xAxis:String(x20),lineStyle:{color:css('--axis'),type:[3,3],width:1},label:{formatter:'2020 pandemic',position:'end',color:css('--muted'),fontSize:10.5}}]}); }
+  // The rule is drawn by a series of its own, with both ends pinned to the axis: hung off one of
+  // the real series it is the library's to place, and it ends up somewhere in the middle of the data.
+  if(x20!=null&&real[0]&&ya&&typeof ya.min==='number'&&typeof ya.max==='number'&&xd.indexOf(x20)>=0){
+    o.series=[...o.series,{type:'line',name:'',data:[],silent:true,animation:false,legendHoverLink:false,
+      markLine:{silent:true,symbol:'none',animation:false,data:[[
+        {xAxis:String(x20),yAxis:ya.min,lineStyle:{color:css('--axis'),type:[3,3],width:1}},
+        {xAxis:String(x20),yAxis:ya.max,label:{show:true,formatter:'2020 pandemic',position:'end',distance:8,color:css('--muted'),fontFamily:css('--f-body'),fontSize:10.5}}]]}}];
+    // where the 2020 value sits right under the caption, that one value label drops below its point
+    const xi=xd.indexOf(x20), span2=(ya.max-ya.min)||1;
+    real.forEach(x=>{ if(!(x.label&&x.label.show)) return; const v=x.data[xi];
+      if(typeof v==='number'&&(ya.max-v)/span2<0.1){ x.data=x.data.slice(); x.data[xi]={value:v,label:{position:'bottom',distance:7}}; } });
+  } else if(x20!=null&&real[0]){ const s2=real[0], ml=s2.markLine||{silent:true,symbol:'none',data:[]};
+    s2.markLine=Object.assign({},ml,{silent:true,symbol:'none',data:[...(ml.data||[]),{xAxis:String(x20),
+      lineStyle:{color:css('--axis'),type:[3,3],width:1},label:{formatter:'2020 pandemic',position:'end',color:css('--muted'),fontSize:10.5}}]}); }
   return o; }
 function baseAxis(){return {axisLine:{lineStyle:{color:css('--axis')}},axisTick:{show:false},axisLabel:{color:css('--muted'),fontFamily:css('--f-body'),fontSize:11},splitLine:{lineStyle:{color:css('--line')}}};}
 function tip(){return {backgroundColor:css('--surface'),borderColor:css('--line'),textStyle:{color:css('--ink'),fontFamily:css('--f-body'),fontSize:12},extraCssText:'box-shadow:0 4px 16px rgba(0,0,0,.12);border-radius:8px'};}
 window.addEventListener('resize',()=>Object.values(charts).forEach(c=>!c.isDisposed()&&c.resize()));
 
 // ---------- tabs
-const pages=['overview','metrics','index','compare','map','goals','local']; const rendered={}; let CUR='overview';
+const pages=['overview','metrics','index','compare','map','goals','insights','local']; const rendered={}; let CUR='overview';
 // the benchmark picker belongs to the pages that score against it; the Overview has its own,
 // and the rest read whatever is already set
 const BENCH_PAGES=new Set(['index','map','compare']);
 function show(p){ CUR=p; pages.forEach(x=>{document.getElementById('page-'+x).hidden=x!==p;document.getElementById('tab-'+x).setAttribute('aria-selected',x===p);});
   const bg=document.querySelector('.benchg'); if(bg) bg.hidden=!BENCH_PAGES.has(p);
-  if(!rendered[p]){rendered[p]=true;({overview:renderP0,metrics:renderP1,index:renderP2,compare:renderP3,map:renderP5,goals:renderG,local:renderL})[p]();}
+  if(!rendered[p]){rendered[p]=true;({overview:renderP0,metrics:renderP1,index:renderP2,compare:renderP3,map:renderP5,goals:renderG,insights:()=>{},local:renderL})[p]();}
   // leaving the Index page mid-play stops the run and leaves the page on the latest year
   if(p==='index') p2AutoPlay(); else if(scrub.playing){ scrub.playing=false; scrub.snap=true; p2SetPlay(false); }
   requestAnimationFrame(()=>Object.values(charts).forEach(c=>!c.isDisposed()&&c.resize()));
@@ -1544,8 +1578,6 @@ window.addEventListener('hashchange',()=>{ if(location.hash===LAST_HASH) return;
 (()=>{ const r=document.getElementById('tabscroll'); if(!r) return; const upd=()=>{ r.dataset.fl=r.scrollLeft>4?'1':'0'; r.dataset.fr=r.scrollWidth-r.clientWidth-r.scrollLeft>4?'1':'0'; };
   r.addEventListener('scroll',upd,{passive:true}); window.addEventListener('resize',upd); requestAnimationFrame(upd); setTimeout(upd,400); })();
 document.querySelectorAll('nav.tabs button[role=tab]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.page)));
-document.addEventListener('click',e=>{ if(e.target.closest&&e.target.closest('.pqa')) return; document.querySelectorAll('.pqa.open').forEach(x=>{ x.classList.remove('open'); x.querySelector('.pans').setAttribute('aria-expanded','false'); }); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.pqa.open').forEach(x=>{ x.classList.remove('open'); x.querySelector('.pans').setAttribute('aria-expanded','false'); }); });
 document.querySelector('nav.tabs [role=tablist]').addEventListener('keydown',e=>{ const tabs=[...document.querySelectorAll('nav.tabs [role=tab]')]; const i=tabs.indexOf(document.activeElement); if(i<0) return;
   const j=e.key==='ArrowRight'?(i+1)%tabs.length:e.key==='ArrowLeft'?(i-1+tabs.length)%tabs.length:e.key==='Home'?0:e.key==='End'?tabs.length-1:-1; if(j<0) return; e.preventDefault(); tabs[j].focus(); show(tabs[j].dataset.page); });
 
@@ -2230,7 +2262,8 @@ function emblemSVG(){
   const LP={Boone:[0.273,0.50],Kenton:[0.545,0.585],Campbell:[0.84,0.50]};
   E.counties.forEach(c=>{const p=LP[c.name];
     s+=`<text class="clab" x="${(p[0]*E.W).toFixed(0)}" y="${(p[1]*E.H).toFixed(0)}" text-anchor="middle">${c.name}</text>`;});
-  s+=`<text class="rlab" x="${E.W*0.43}" y="${E.H*0.13}" text-anchor="middle">Ohio River</text><text class="rlab" x="${E.W*0.705}" y="${E.H*0.80}" text-anchor="middle" transform="rotate(-74 ${E.W*0.705} ${E.H*0.80})">Licking River</text>`;
+  s+=`<text class="rlab" x="${(E.W*0.153).toFixed(1)}" y="${(E.H*0.098).toFixed(1)}" text-anchor="middle" transform="rotate(-38 ${(E.W*0.153).toFixed(1)} ${(E.H*0.098).toFixed(1)})">Ohio River</text><text class="rlab" x="${E.W*0.705}" y="${E.H*0.80}" text-anchor="middle" transform="rotate(-74 ${E.W*0.705} ${E.H*0.80})">Licking River</text>`;
+  s+=`<text class="citylab" x="${(E.W*0.455).toFixed(1)}" y="${(E.H*0.115).toFixed(1)}" text-anchor="middle">Cincinnati</text>`;
   return s+'</svg>';
 }
 function setHL(id,html){const el=document.getElementById(id); if(el) el.innerHTML=html;}
@@ -2239,29 +2272,6 @@ function drawEmblem(){ const fig=document.getElementById('ov-emblem'); if(fig) f
 // ---- plain answers to the six domain questions, written from two facts the page already holds for
 // every metric: whether Northern Kentucky is ahead of the median metro in the latest year both report,
 // and whether its own figure has moved the better way over the last five years. No scores involved.
-function domFacts(pi){ const p=P[pi], out=[];
-  M.forEach((m,k)=>{ if(m.pillar!==p) return; const v=D.values[NKY][k], md=D.median[k];
-    let l=-1; for(let j=Y.length-1;j>=0;j--){ if(v[j]!=null&&md[j]!=null){ l=j; break; } } if(l<0) return;
-    let f=Math.max(0,l-5); while(f<l&&v[f]==null) f++;
-    const ahead=(v[l]-md[l])*m.dir>0, improving=(v[l]-v[f])*m.dir>0;
-    const rel=Math.abs(md[l])>1e-9?(v[l]-md[l])*m.dir/Math.abs(md[l]):(v[l]-md[l])*m.dir;
-    // standing among all benchmark metros, in standard deviations, ranks the standouts and the exceptions
-    const z=(SIM.m[k]&&SIM.m[k].nkyz!=null)?SIM.m[k].nkyz:rel;
-    out.push({k,v:v[l],md:md[l],y:Y[l],f:Y[f],ahead,improving,rel,z}); });
-  return out; }
-// Yes: all but one measure ahead of the typical metro and most improving. No: all but one behind. Mostly: in between.
-function domVerdict(F){ const n=F.length, a=F.filter(x=>x.ahead).length, i=F.filter(x=>x.improving).length;
-  if(n<3) return null; if(a>=n-1&&i>=Math.ceil(n*0.6)) return 'yes'; if(a<=1) return 'no'; return 'mostly'; }
-function domAnswer(pi){ const F=domFacts(pi), vd=domVerdict(F); if(!vd) return null;
-  const n=F.length, a=F.filter(x=>x.ahead).length, i=F.filter(x=>x.improving).length;
-  const num=['none','one','two','three','four','five','six'], cap=t=>t.charAt(0).toUpperCase()+t.slice(1), metro=`the typical ${B().metro}`;
-  const lead=a===n?`All ${num[n]} measures are ahead of ${metro}`:a===0?`None of the ${num[n]} measures is ahead of ${metro}`:`${cap(num[a])} of the ${num[n]} measures ${a===1?'is':'are'} ahead of ${metro}`;
-  const parts=[`${lead}, and ${i===n?'all':i===0?'none':num[i]} ${i===1?'has':'have'} improved over the last five years.`];
-  const strong=F.filter(x=>x.ahead&&x.improving).sort((p,q)=>q.z-p.z).slice(0,2);
-  const weak=F.filter(x=>!x.ahead||!x.improving).sort((p,q)=>p.z-q.z).slice(0,2);
-  if(strong.length) parts.push(strong.map(x=>`${SHORT[x.k]} is ${fmt(x.k,x.v)} against ${fmt(x.k,x.md)}`).join(', and ')+'.');
-  if(weak.length) parts.push((weak.length===1?'The exception is ':'The exceptions are ')+weak.map(x=>`${SHORT[x.k]} (${fmt(x.k,x.v)}, ${x.ahead?`ahead but slipping since ${x.f}`:x.improving?`improving but still behind ${fmt(x.k,x.md)}`:`behind ${fmt(x.k,x.md)} and slipping`})`).join(' and ')+'.');
-  return {vd, word:vd==='yes'?'Yes':vd==='no'?'No':'Mostly', text:parts.join(' ')}; }
 function renderP0(){
   const sc=getScores(NKY,'latest'); const bt=beatCount(NKY,sc); const bw=bestWorst(sc);
   { const h=heroParts(sc); const big=h.b?`${h.a}<i> ${h.conn} </i>${h.b}`:h.a;
@@ -2277,14 +2287,9 @@ function renderP0(){
     <div class="gs-r">${swarm(NKY,'latest',bt.beat,bt.of)}</div>`; }
   const g=document.getElementById('ov-pillars');
   g.innerHTML=P.map((p,pi)=>`<article class="pcard" style="--pc:var(--p${pi})"><div class="ph">${dicon(pi,'lg')}<h3 data-n="${String(pi+1).padStart(2,'0')}">${esc(p)}</h3></div>
-    ${(()=>{ const A=domAnswer(pi); if(!A) return `<p class="pq">${esc(PINFO[pi].q)}</p>`;
-      return `<div class="pqa"><button type="button" class="pans" aria-expanded="false" aria-controls="pdet-${pi}" title="Show the evidence"><span class="pq">${esc(PINFO[pi].q)}</span><span class="pv pv-${A.vd}">${A.word}</span></button><div class="pdet" id="pdet-${pi}" role="region" aria-label="Evidence for ${esc(p)}"><p>${esc(A.text)}</p></div></div>`; })()}
+    <p class="pq">${esc(PINFO[pi].q)}</p>
     <ul>${M.map((m,k)=>m.pillar!==p?'':`<li><button type="button" data-k="${k}"><b>${esc(SHORT[k])}</b><span>${esc(PURPOSE[k])}</span><i>›</i></button></li>`).join('')}</ul></article>`).join('');
   g.querySelectorAll('button[data-k]').forEach(b=>b.addEventListener('click',()=>openDetail(+b.dataset.k)));
-  // hover shows the evidence; a click pins it open until the next click, Escape, or a click elsewhere
-  g.querySelectorAll('.pans').forEach(b=>b.addEventListener('click',()=>{ const w=b.parentNode, on=!w.classList.contains('open');
-    g.querySelectorAll('.pqa.open').forEach(x=>{ x.classList.remove('open'); x.querySelector('.pans').setAttribute('aria-expanded','false'); });
-    w.classList.toggle('open',on); b.setAttribute('aria-expanded',String(on)); }));
   document.querySelectorAll('#page-overview [data-go]').forEach(b=>b.addEventListener('click',()=>{show(b.dataset.go);window.scrollTo({top:0,behavior:'smooth'});}));
 }
 
@@ -3256,7 +3261,7 @@ document.querySelectorAll('.bseg button[data-b]').forEach(b=>{ const k=b.dataset
   b.addEventListener('click',()=>setBench(k)); });
 document.getElementById('bench-g').addEventListener('change',e=>setBench(e.target.value));
 syncBenchUI();
-function redrawAll(){ Object.keys(rendered).forEach(p=>({overview:renderP0,metrics:renderP1,index:renderP2,compare:renderP3,map:renderP5,goals:renderG,local:renderL})[p]()); if(document.getElementById('dlg').open&&dlgRedraw) dlgRedraw();}
+function redrawAll(){ Object.keys(rendered).forEach(p=>({overview:renderP0,metrics:renderP1,index:renderP2,compare:renderP3,map:renderP5,goals:renderG,insights:()=>{},local:renderL})[p]()); if(document.getElementById('dlg').open&&dlgRedraw) dlgRedraw();}
 try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',redrawAll);}catch(e){}
 new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 // sun and moon: one button, showing the palette it switches to. Every chart and map repaints
