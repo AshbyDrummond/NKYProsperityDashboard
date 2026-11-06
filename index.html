@@ -1250,8 +1250,8 @@ nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--ax
     <div class="controls">
       <div class="ctl l-selctl"><label class="lab" for="l-sel">Metric</label><select id="l-sel"></select></div>
       <div class="ctl l-railctl"><span class="lab">Measures</span><button type="button" class="btn" id="l-rail-btn" aria-expanded="false" aria-controls="l-rail">Browse all measures</button></div>
-      <div class="ctl"><span class="lab">Compare</span><div class="chips" id="l-scope"><button class="chip" type="button" data-s="nky" aria-pressed="true">Northern Kentucky</button><button class="chip" type="button" data-s="msa" aria-pressed="false">Cincinnati MSA</button><button class="chip" type="button" data-s="ky" aria-pressed="false">All of Kentucky</button></div></div>
-      <div class="ctl" id="l-geo-ctl"><span class="lab">Geography</span><div class="chips" id="l-geo"><button class="chip" type="button" data-g="counties" aria-pressed="true">Counties</button><button class="chip" type="button" data-g="tracts" aria-pressed="false">Census tracts</button><button class="chip" type="button" data-g="places" aria-pressed="false">Cities and towns</button><button class="chip" type="button" data-g="districts" aria-pressed="false">School districts</button></div></div>
+      <div class="ctl"><span class="lab">Compare</span><div class="chips" id="l-scope"><button class="chip" type="button" data-s="nky" aria-pressed="true">Northern Kentucky</button><button class="chip" type="button" data-s="msa" aria-pressed="false">Cincinnati MSA</button><button class="chip" type="button" data-s="ky" aria-pressed="false">All of Kentucky</button><button class="chip" type="button" data-s="districts" aria-pressed="false">School districts</button></div></div>
+      <div class="ctl" id="l-geo-ctl"><span class="lab">Geography</span><div class="chips" id="l-geo"><button class="chip" type="button" data-g="counties" aria-pressed="true">Counties</button><button class="chip" type="button" data-g="tracts" aria-pressed="false">Census tracts</button><button class="chip" type="button" data-g="places" aria-pressed="false">Cities and towns</button></div></div>
       <div class="ctl"><label class="lab" for="l-year">Year</label><select id="l-year"></select></div>
     </div>
   </div>
@@ -2857,8 +2857,8 @@ function lPoint(svg,cx,cy){ const G=lGeoDef(), b=svg.getBoundingClientRect(); re
   svg.addEventListener('pointerup',end); svg.addEventListener('pointercancel',end); })();
 function renderL(){ syncHash(); fillLSel(); fillLRail(); const mi=lp.m, m=LMET[mi], dir=m.dir, U=lUnits(), G=lGeoDef(), svg=document.getElementById('l-map'), GW=LGEO[lp.geo], wide=lWide();
   document.querySelectorAll('#l-geo .chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.g===lp.geo)));
-  document.querySelectorAll('#l-scope .chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.s===lScope())));
-  const gctl=document.getElementById('l-geo-ctl'); if(gctl) gctl.hidden=wide;
+  document.querySelectorAll('#l-scope .chip').forEach(c=>c.setAttribute('aria-pressed',String(lp.geo==='districts'?c.dataset.s==='districts':c.dataset.s===lScope())));
+  const gctl=document.getElementById('l-geo-ctl'); if(gctl) gctl.hidden=wide||lp.geo==='districts';
   const lys=document.getElementById('l-year'); if(lys) lys.value=String(lp.year);
   const lsrc=document.getElementById('l-dist-src'); if(lsrc) lsrc.textContent=lSrcLine();
   const allv=Object.keys(U).map(id=>{ const r=lVal(id,mi); return {id,v:r.v,mo:r.mo,y:r.y,pop:U[id].pop}; }).filter(x=>x.v!=null);
