@@ -938,6 +938,20 @@ nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--ax
 .lmap text.lbl{font:600 11px var(--f-body);fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round;pointer-events:none;text-anchor:middle}
 .lmap text.lbl.co{font:700 12px var(--f-body);letter-spacing:.12em;text-transform:uppercase;fill:var(--ink-2);opacity:.95}
 .lleg{display:block;margin:0 0 10px}
+.lexpand{position:absolute;right:8px;top:118px;z-index:4;display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--accent);border-radius:8px;background:var(--surface);color:var(--accent);font:700 12.5px var(--f-body);letter-spacing:.02em;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.lexpand:hover{background:var(--accent);color:#fff}
+.lfull-body .lexpand{top:8px;right:52px}
+@media (max-width:720px){.lexpand span{display:none}.lexpand{padding:8px 9px}}
+.lfull{width:calc(100vw - 24px);max-width:none;height:calc(100vh - 24px);max-height:none;padding:14px 18px 16px;box-sizing:border-box;display:none;flex-direction:column;gap:8px}
+.lfull[open]{display:flex}
+.lfull-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex:none}
+.lfull-head .kicker{margin:0}
+.lfull-head .sub{margin:2px 0 0;font-size:13px;color:var(--ink-2)}
+.lfull-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:8px}
+.lfull-body .lleg{flex:none}
+.lfull-body .lmapbox{flex:1 1 auto;min-height:0;display:flex}
+.lfull-body .lmap{max-height:none;height:100%;width:100%}
+@media (max-width:720px){.lfull{width:100vw;height:100vh;padding:10px 12px 12px}}
 .lleg .lt{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin-bottom:7px}
 .lkey{display:flex;align-items:flex-end;gap:10px 26px;flex-wrap:wrap}
 .lscale{flex:none}
@@ -1265,9 +1279,10 @@ nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--ax
   <div class="mapwrap">
     <div class="panel mappanel">
       <div class="maplegend lleg" id="l-legend"></div>
-      <div class="mapbox lmapbox"><div class="zoomctl" role="group" aria-label="Map zoom"><button type="button" id="lzin" aria-label="Zoom in">+</button><button type="button" id="lzout" aria-label="Zoom out">−</button><button type="button" id="lzreset" aria-label="Reset zoom" title="Reset view">↺</button></div><svg id="l-map" class="lmap" role="img" aria-label="Map of Northern Kentucky census tracts colored by the selected metric"></svg><div class="maptip" id="l-tip" hidden></div></div>
+      <div class="mapbox lmapbox"><div class="zoomctl" role="group" aria-label="Map zoom"><button type="button" id="lzin" aria-label="Zoom in">+</button><button type="button" id="lzout" aria-label="Zoom out">−</button><button type="button" id="lzreset" aria-label="Reset zoom" title="Reset view">↺</button></div><button type="button" class="lexpand" id="lzfull" aria-label="Expand the map" title="Expand the map"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Expand map</span></button><svg id="l-map" class="lmap" role="img" aria-label="Map of Northern Kentucky census tracts colored by the selected metric"></svg><div class="maptip" id="l-tip" hidden></div></div>
       <p class="note" id="l-note"></p>
       <div class="ldist" id="l-dist"></div>
+    <dialog id="l-full" class="lfull" aria-label="Expanded map"><div class="lfull-head"><div><p class="kicker" id="l-full-k"></p><p class="sub" id="l-full-s"></p></div><button class="x" id="l-full-x" type="button">Close</button></div><div class="lfull-body" id="l-full-body"></div></dialog>
     </div>
     <div class="mapside">
       <div class="panel" id="l-detail"></div>
@@ -2844,6 +2859,20 @@ function lPoint(svg,cx,cy){ const G=lGeoDef(), b=svg.getBoundingClientRect(); re
   document.getElementById('lzin').addEventListener('click',()=>lZoomAt(lz.x+G.w/lz.k/2,lz.y+G.h/lz.k/2,1.6));
   document.getElementById('lzout').addEventListener('click',()=>lZoomAt(lz.x+G.w/lz.k/2,lz.y+G.h/lz.k/2,1/1.6));
   document.getElementById('lzreset').addEventListener('click',()=>{lz.k=1;lz.x=0;lz.y=0;applyLZoom();});
+  // Expanded map: the map box and its legend move into a near-fullscreen dialog and back, so every
+  // handler, the zoom state and the selection stay the same element.
+  const full=document.getElementById('l-full'), body=document.getElementById('l-full-body');
+  const box=svg.closest('.lmapbox'), leg=document.getElementById('l-legend'); const boxHome=document.createComment('map'), legHome=document.createComment('legend');
+  const openFull=()=>{ if(full.open) return; box.parentNode.insertBefore(boxHome,box); leg.parentNode.insertBefore(legHome,leg); body.appendChild(leg); body.appendChild(box);
+    document.getElementById('l-full-k').textContent=`${lp.geo==='districts'?'Northern Kentucky school districts':lWide()?lSc().label||lRegionName():'Northern Kentucky '+LGEO[lp.geo].word} · ${lp.year}`;
+    document.getElementById('l-full-s').textContent='Click an area to select it. Scroll with Ctrl or pinch to zoom, drag to pan, double-click to zoom in. Esc closes.';
+    full.showModal(); const fb=document.getElementById('lzfull'); fb.querySelector('span').textContent='Shrink map'; fb.title='Shrink the map'; };
+  const closeFull=()=>{ if(!full.open) return; full.close(); };
+  full.addEventListener('close',()=>{ boxHome.parentNode.insertBefore(box,boxHome); boxHome.remove(); legHome.parentNode.insertBefore(leg,legHome); legHome.remove(); const fb=document.getElementById('lzfull'); fb.querySelector('span').textContent='Expand map'; fb.title='Expand the map'; });
+  document.getElementById('lzfull').addEventListener('click',()=>full.open?closeFull():openFull());
+  document.getElementById('l-full-x').addEventListener('click',closeFull);
+  full.addEventListener('click',e=>{ if(e.target===full) closeFull(); });
+
   svg.addEventListener('wheel',e=>{ if(!(e.ctrlKey||e.metaKey)) return; e.preventDefault(); const [px,py]=lPoint(svg,e.clientX,e.clientY); lZoomAt(px,py,Math.exp(-e.deltaY*0.0025)); },{passive:false});
   svg.addEventListener('dblclick',e=>{ e.preventDefault(); const [px,py]=lPoint(svg,e.clientX,e.clientY); lZoomAt(px,py,e.shiftKey?1/2:2); });
   const pts=new Map(); let start=null, pinch=null;
