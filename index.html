@@ -17,8 +17,8 @@ try{var _t=localStorage.getItem('nkytheme');document.documentElement.setAttribut
 <style>
 /* Layout: editorial civic report. Logo masthead with a brand-orange rule, sticky tab rail, then each page opens with a headline written from the data. Open layout on hairline rules instead of boxed cards. */
 :root{
-  --bg:#f4f0e8; --surface:#fbf9f4; --surface-2:#ebe5da; --ink:#15202a; --ink-2:#47525c; --muted:#666b71;
-  --line:#e1d9cc; --axis:#c8bfb1; --accent:#002959; --accent-ink:#ffffff; --accent-soft:#e3e9f3; --brand:#FF8205; --river:#385E9D; --brand-blue:#385E9D; --land:#e3e8ef;
+  --bg:#ece5d6; --surface:#f6f0e3; --surface-2:#e4dbc9; --ink:#15202a; --ink-2:#47525c; --muted:#666b71;
+  --line:#d9ccb8; --axis:#bfb29e; --accent:#002959; --accent-ink:#ffffff; --accent-soft:#e3e9f3; --brand:#FF8205; --river:#385E9D; --brand-blue:#385E9D; --land:#e2e2da;
   --s1:#EE7600; --s2:#002959; --s3:#5f8fcc; --s4:#7c8b97; --s5:#9fb7d6; --c1:#a84b00; --c2:#e98a2b; --c3:#f4b56e; --median:#8a949c;
   --good:#006300; --bad:#c43232; --div-neg:#d64545; --div-mid:#e3e6e8; --div-pos:#2e9a4f;
   --heat-lo:#d64545; --heat-hi:#2e9a4f; --t0:#c9302c; --t1:#ee8a3c; --t2:#ecc94b; --t3:#8cc760; --t4:#1f8a45;
@@ -938,9 +938,11 @@ nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--ax
 .lmap text.lbl{font:600 11px var(--f-body);fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round;pointer-events:none;text-anchor:middle}
 .lmap text.lbl.co{font:700 12px var(--f-body);letter-spacing:.12em;text-transform:uppercase;fill:var(--ink-2);opacity:.95}
 .lleg{display:block;margin:0 0 10px}
-.lexpand{position:absolute;right:8px;top:118px;z-index:4;display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--accent);border-radius:8px;background:var(--surface);color:var(--accent);font:700 12.5px var(--f-body);letter-spacing:.02em;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.lmapbox{padding-bottom:46px}
+.lexpand{position:absolute;left:0;bottom:0;z-index:4;display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--accent);border-radius:8px;background:var(--surface);color:var(--accent);font:700 12.5px var(--f-body);letter-spacing:.02em;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .lexpand:hover{background:var(--accent);color:#fff}
-.lfull-body .lexpand{top:8px;right:52px}
+.lfull-body .lmapbox{padding-bottom:0}
+.lfull .lexpand{left:auto;bottom:auto;top:8px;right:52px}
 @media (max-width:720px){.lexpand span{display:none}.lexpand{padding:8px 9px}}
 .lfull{width:calc(100vw - 24px);max-width:none;height:calc(100vh - 24px);max-height:none;padding:14px 18px 16px;box-sizing:border-box;display:none;flex-direction:column;gap:8px}
 .lfull[open]{display:flex}
