@@ -875,8 +875,6 @@ nav.tabs button.themetog:hover{background:var(--surface-2);border-color:var(--ax
   .mast p{display:none!important}
 }
 /* goals: status pills + pace line */
-.goal .pace{font-size:12.5px;color:var(--muted);margin-top:-2px}
-.goal .pace b{font-weight:600;color:var(--ink-2)}
 .goal.flash{outline:2px solid var(--accent);outline-offset:4px;transition:outline-color .3s}
 .dlx{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:14px;font-size:13px}
 .dlx .lab{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -3515,10 +3513,6 @@ const GOALS=GOAL_SPEC.map(([name,spec])=>{
 const gMet=g=>(g.now-g.target)*g.dir>=0;
 function gapText(g){ const d=g.target-g.now; if((g.now-g.target)*g.dir>=0) return 'Goal reached'; return g.dir<0?`${g.gap(d)} to cut`:`+${g.gap(d)} to go`; }
 const sgnGap=(g,d)=>{ const dd=FT[g.k]==='usd'?Math.round(d/100)*100:d; const t=g.gap(dd); return /^\$?0(\.0+)?( pts)?$/.test(t)?t:(dd>=0?'+':'−')+t; };
-function paceText(g){ const rp=g.pace?`recent pace <b>${sgnGap(g,g.pace.v)}</b> a year since ${g.pace.from}`:'';
-  if(gMet(g)) return rp?`Goal reached; ${rp}.`:'Goal reached.';
-  if(g.need==null) return rp?rp[0].toUpperCase()+rp.slice(1)+'.':'';
-  return `Needs <b>${sgnGap(g,g.need)}</b> a year to ${G_END}${rp?`; ${rp}`:''}.`; }
 function renderG(){
   setHL('hl-goals',`<em>${GOALS.length} goals for ${G_END}</em>, each a value to reach, measured against where Northern Kentucky stood in ${G_BASE}.`);
   const el=document.getElementById('g-grid');
@@ -3527,7 +3521,6 @@ function renderG(){
     <div class="dom">${esc(g.pillar)}</div>
     <div class="gpair"><div><span class="gk">Now (${g.ly})</span><span class="now">${g.f(g.now)}</span></div><div class="gt"><span class="gk">${G_END} goal</span><span class="now">${g.f(g.target)}</span></div></div>
     <div class="gl"><b>${gapText(g)}</b> · ${g.f(g.base)} in ${g.by}${g.note?` · goal is the ${g.note} value`:''}</div>
-    <div class="pace">${paceText(g)}</div>
     <div class="gc" id="gc${i}" role="img" aria-label="${esc(`${g.name}: ${g.f(g.now)} in ${g.ly}, goal ${g.f(g.target)} by ${G_END}. Line chart of yearly values since 2015 with the straight path from ${g.by} to the ${G_END} goal.`)}"></div></button>`).join('');
   el.querySelectorAll('.goal').forEach(b=>b.addEventListener('click',()=>{const g=GOALS[+b.dataset.i]; if(g.k!=null) openDetail(g.k);}));
   GOALS.forEach((g,i)=>{ const xs=[]; for(let y=2015;y<=G_END;y++) xs.push(String(y));
@@ -3783,7 +3776,6 @@ window.__pdfGoals=async function(){ const R=await pdfStart('Goals for 2030','Nor
     KICK(`${G_END} goal`,cx+80,cy+38,C.navy); T(g.f(g.target),cx+80,cy+56,'BCb',18,C.navy);
     doc.setDrawColor(C.line); doc.setLineWidth(.6); doc.line(cx+72,cy+32,cx+72,cy+60);
     T(`${gapText(g)} · ${g.f(g.base)} in ${g.by}`,cx,cy+70,'PS',7.2,C.ink2);
-    font('PS',6.6,C.mut); const pt=paceText(g).replace(/<[^>]+>/g,''); const pl=doc.splitTextToSize(pt,cw-112); doc.text(pl,cx,cy+80);
     // mini chart: actual series + path to goal, drawn at the right
     const gx0=cx+cw-96, gw=96, gy1=cy+34, gh=58; const xs=[]; for(let yy=2015;yy<=G_END;yy++) xs.push(yy);
     const act=xs.map(yy=>{const j=Y.indexOf(yy); return j>=0?(g.ser[j]??null):null;}), path=xs.map(yy=>yy>=g.by?g.base+(g.target-g.base)*((yy-g.by)/(G_END-g.by)):null);
