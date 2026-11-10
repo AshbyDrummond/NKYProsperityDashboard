@@ -1029,7 +1029,7 @@ body[data-slim] .mast h1{font-size:18px!important;line-height:1.2!important;marg
 body[data-slim] .mast h1 span{display:inline!important}
 body[data-slim] .mast h1 span+span{margin-left:.3em}
 body[data-slim] .mast p{display:none!important}
-body[data-slim] .roebling{flex:0 0 auto;width:190px;height:38px}
+body[data-slim] .roebling{flex:0 0 auto;width:190px;height:0;opacity:0;visibility:hidden}
 /* ---- V215: Prosperity Index jump bar, pinned under the tabs, with the page's three controls in one row */
 .idxbar{position:sticky;top:var(--navh,49px);z-index:15;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 24px;margin:16px 0 16px;padding:8px 0;background:var(--bg);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .idxjump{display:flex;gap:4px;align-items:center;min-width:0;overflow-x:auto;scrollbar-width:none}
@@ -1290,10 +1290,14 @@ body[data-hl="0"] .fp path[data-dom]:not([data-dom="0"]),body[data-hl="1"] .fp p
   .mast .logo{transition:height .28s cubic-bezier(.3,.7,.2,1)}
   .mast h1{transition:font-size .28s cubic-bezier(.3,.7,.2,1)}
   .mast-in{transition:padding .28s cubic-bezier(.3,.7,.2,1)}
-  .roebling{transition:height .28s cubic-bezier(.3,.7,.2,1)}
+  .roebling{transition:height .28s cubic-bezier(.3,.7,.2,1),opacity .24s ease .06s,visibility 0s}
+  body[data-slim] .roebling{transition:height .28s cubic-bezier(.3,.7,.2,1),opacity .16s ease,visibility 0s linear .28s}
 }
 .mast.notrans,.mast.notrans *{transition:none!important}
 @media print{.tabind{display:none!important}}
+/* ---- V230: closed insight rows share one height */
+.ins-sum{min-height:var(--insh,0px)}
+@media print{.ins-sum{min-height:0}}
 @media print{
   @page{margin:12mm}
   body{background:#fff;color:#15202a}
@@ -1328,8 +1332,8 @@ body[data-hl="0"] .fp path[data-dom]:not([data-dom="0"]),body[data-hl="1"] .fp p
   <button role="tab" id="tab-overview" aria-selected="true" data-page="overview">Overview</button>
   <button role="tab" id="tab-metrics" aria-selected="false" data-page="metrics">Regional Metrics</button>
   <button role="tab" id="tab-goals" aria-selected="false" data-page="goals">Goals</button>
-  <button role="tab" id="tab-insights" aria-selected="false" data-page="insights">Actionable Insights</button>
   <button role="tab" id="tab-index" aria-selected="false" data-page="index">Prosperity Index</button>
+  <button role="tab" id="tab-insights" aria-selected="false" data-page="insights">Actionable Insights</button>
   <button role="tab" id="tab-local" aria-selected="false" data-page="local">Local Data</button>
   <i class="tabind" id="tabind" aria-hidden="true"></i>
   </div>
@@ -1997,6 +2001,7 @@ function show(p){ const prev=CUR, mast=document.querySelector('header.mast'); CU
   { const ps=document.getElementById('pagesel'); if(ps&&ps.value!==tabOf(p)) ps.value=tabOf(p); }
   document.querySelectorAll('.viewsw button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===p)));
   if(!rendered[p]){rendered[p]=true;({overview:renderP0,metrics:renderP1,index:renderP2,map:renderP5,goals:renderG,insights:renderINS,local:renderL})[p]();}
+  if(p==='insights') insEven();
   // leaving the Index page mid-play stops the run and leaves the page on the latest year
   if(p!=='index'&&scrub.story) p2StoryStop();
   if(p!=='index'&&scrub.playing){ scrub.playing=false; scrub.snap=true; p2SetPlay(false); }
@@ -4164,6 +4169,7 @@ function renderINS(){
     btn.setAttribute('aria-expanded',String(!open));
     easeToggle(document.getElementById(btn.getAttribute('aria-controls')),!open);
   }));
+  insEven();
   insFillSelect();
   const sel=document.getElementById('ins-m'); if(sel) sel.value=String(insState.m);
   insDetail(); }
@@ -4235,7 +4241,7 @@ new MutationObserver(redrawAll).observe(document.documentElement,{attributes:tru
 // One box over the 30 regional metrics, the Local Data measures, every metro in the index, and the pages.
 (()=>{ const dlg=document.getElementById('srch'), q=document.getElementById('srch-q'), list=document.getElementById('srch-list'); if(!dlg||!q||!list) return;
   let IDX=null, flat=[], act=0;
-  const PAGE_E=[['overview','Overview'],['metrics','Regional Metrics'],['goals','Goals'],['insights','Actionable Insights'],['index','Prosperity Index'],['map','Prosperity Index map'],['local','Local Data']];
+  const PAGE_E=[['overview','Overview'],['metrics','Regional Metrics'],['goals','Goals'],['index','Prosperity Index'],['map','Prosperity Index map'],['insights','Actionable Insights'],['local','Local Data']];
   const GL=['Regional metrics','Local Data measures','Metros','Pages'], GA=['Open metric','Map it locally','See its scores','Go to page'];
   const build=()=>{ const out=[];
     M.forEach((m,k)=>out.push({g:0,k,name:SHORT[k],ctx:m.pillar,hay:[m.name,SHORT[k],m.pillar,UNIT[k],PURPOSE[k],INFO[k].what].join(' ').toLowerCase()}));
@@ -4292,6 +4298,11 @@ new MutationObserver(redrawAll).observe(document.documentElement,{attributes:tru
 show(applyHash());
 // the underline is placed without motion the first time, then slides
 requestAnimationFrame(()=>{ tabInd(); requestAnimationFrame(()=>document.querySelector('nav.tabs').classList.add('ind-on')); });
+// every closed insight row takes the height of the tallest one, so the colored rules sit at even intervals
+function insEven(){ const box=document.getElementById('ins-cards'); if(!box||!box.offsetParent) return;
+  box.style.removeProperty('--insh'); let m=0; box.querySelectorAll('.ins-sum').forEach(b=>{ m=Math.max(m,b.getBoundingClientRect().height); });
+  if(m) box.style.setProperty('--insh',Math.ceil(m)+'px'); }
+window.addEventListener('resize',()=>{ if(CUR==='insights') insEven(); }); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(insEven);
 window.addEventListener('resize',tabInd); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(tabInd);
 // a link that names a metric or a domain on the Index page opens its score over time
 if(CUR==='index'&&p2.sel!=='o') requestAnimationFrame(()=>openP2Trend());
